@@ -1,0 +1,71 @@
+{
+  "docs": [
+    {
+      "type": "category",
+      "label": "Introduction",
+      "items": [
+        "introduction/overview",
+        "introduction/philosophy"
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Getting Started",
+      "items": [
+        "getting-started/installation",
+        "getting-started/quick-start",
+        "getting-started/project-structure"
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Configuration",
+      "items": [
+        "configuration/overview",
+        "configuration/server-options",
+        "configuration/build-options",
+        "configuration/resolve-options"
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Plugins",
+      "items": [
+        "plugins/overview",
+        "plugins/plugin-api",
+        "plugins/creating-plugins",
+        "plugins/official-plugins"
+      ]
+    },
+    {
+      "type": "category",
+      "label": "CLI",
+      "items": [
+        "cli/overview",
+        "cli/dev",
+        "cli/build",
+        "cli/preview",
+        "cli/graph"
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Guides",
+      "items": [
+        "guides/environment-variables",
+        "guides/path-aliases",
+        "guides/ssr-static-export",
+        "guides/optimizing-deps"
+      ]
+    },
+    {
+      "type": "category",
+      "label": "API Reference",
+      "items": [
+        "api/config-types",
+        "api/plugin-types",
+        "api/javascript-api"
+      ]
+    }
+  ]
+}

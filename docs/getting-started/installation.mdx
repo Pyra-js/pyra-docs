@@ -1,0 +1,145 @@
+---
+title: Installation
+description: Install Pyra.js and set up your development environment.
+sidebar_label: Installation
+slug: /docs/getting-started/installation
+---
+
+import Terminal from '../components/Terminal';
+import Callout from '../components/Callout';
+import Step from '../components/Step';
+
+# Installation
+
+<p className="text-xl text-gray-400 leading-relaxed">
+  Get started with Pyra.js in minutes. Install globally or use it directly with npx.
+</p>
+
+## Prerequisites
+
+Before installing Pyra.js, ensure you have:
+
+- **Node.js** version 16.0 or higher
+- **npm**, **pnpm**, or **yarn** package manager
+
+<Callout type="tip">
+  We recommend using the latest LTS version of Node.js for the best experience.
+</Callout>
+
+## Global Installation
+
+Install Pyra.js globally to use it across all your projects:
+
+<Terminal>npm install -g pyra</Terminal>
+
+<Terminal>pnpm add -g pyra</Terminal>
+
+<Terminal>yarn global add pyra</Terminal>
+
+After installation, verify it's working:
+
+<Terminal>pyra --version</Terminal>
+
+## Using npx (No Installation)
+
+You can use Pyra.js without installing it globally:
+
+<Terminal>npx pyra create my-app</Terminal>
+
+This is perfect for trying Pyra.js or creating one-off projects.
+
+## Project-Specific Installation
+
+For project-specific installations, add Pyra.js as a dev dependency:
+
+<Terminal>npm install -D pyra</Terminal>
+
+Then add scripts to your `package.json`:
+
+```json
+{
+  "scripts": {
+    "dev": "pyra dev",
+    "build": "pyra build",
+    "preview": "pyra preview"
+  }
+}
+```
+
+<Callout type="note">
+  Project-specific installation is recommended for team projects to ensure everyone uses the same Pyra version.
+</Callout>
+
+## System Requirements
+
+### Minimum Requirements
+
+- **Node.js**: 16.0+
+- **RAM**: 512 MB available
+- **Disk Space**: 100 MB for Pyra + dependencies
+
+### Recommended
+
+- **Node.js**: 18.0+ (LTS)
+- **RAM**: 2 GB available
+- **Disk Space**: 500 MB for optimal caching
+
+## Troubleshooting
+
+### Permission Errors (macOS/Linux)
+
+If you encounter permission errors during global installation:
+
+<Terminal>sudo npm install -g pyra</Terminal>
+
+Or configure npm to use a different directory:
+
+<Terminal>npm config set prefix ~/.npm-global</Terminal>
+
+Then add to your PATH:
+
+```bash
+export PATH=~/.npm-global/bin:$PATH
+```
+
+### Windows Long Path Issues
+
+Enable long paths in Windows if you encounter path length errors:
+
+<Terminal>git config --system core.longpaths true</Terminal>
+
+### Network Issues
+
+If installation fails due to network issues, try:
+
+1. Use a different registry:
+
+<Terminal>npm install -g pyra --registry=https://registry.npmmirror.com</Terminal>
+
+2. Increase timeout:
+
+<Terminal>npm install -g pyra --fetch-timeout=60000</Terminal>
+
+<Callout type="warn">
+  If you're behind a corporate proxy, you may need to configure npm proxy settings. See the [npm documentation](https://docs.npmjs.com/cli/v8/using-npm/config#proxy) for details.
+</Callout>
+
+## Updating Pyra.js
+
+Keep Pyra.js up to date to get the latest features and bug fixes:
+
+<Terminal>npm update -g pyra</Terminal>
+
+Check for available updates:
+
+<Terminal>npm outdated -g pyra</Terminal>
+
+## Uninstalling
+
+To remove Pyra.js:
+
+<Terminal>npm uninstall -g pyra</Terminal>
+
+## Next Steps
+
+Now that Pyra.js is installed, you're ready to create your first project! Continue to the [Quick Start Guide](/docs/getting-started/quick-start).

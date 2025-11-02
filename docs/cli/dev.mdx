@@ -1,0 +1,293 @@
+---
+title: pyra dev
+description: Start the Pyra.js development server with hot module replacement.
+sidebar_label: pyra dev
+slug: /docs/cli/dev
+---
+
+import Terminal from '../components/Terminal';
+import GradientCode from '../components/GradientCode';
+import Callout from '../components/Callout';
+
+# pyra dev
+
+<p className="text-xl text-gray-400 leading-relaxed">
+  Start the development server with instant hot module replacement.
+</p>
+
+## Usage
+
+<Terminal>pyra dev</Terminal>
+
+This starts the dev server at `http://localhost:3000` by default.
+
+## Options
+
+### `--port <number>`
+
+Specify the port number:
+
+<Terminal>pyra dev --port 8080</Terminal>
+
+If the port is already in use, Pyra will automatically try the next available port.
+
+### `--host [host]`
+
+Expose the server to your network:
+
+<Terminal>pyra dev --host</Terminal>
+
+Or specify a custom host:
+
+<Terminal>pyra dev --host 0.0.0.0</Terminal>
+
+<Callout type="tip">
+  Use `--host` to test your app on mobile devices connected to the same network.
+</Callout>
+
+### `--open [path]`
+
+Automatically open the browser:
+
+<Terminal>pyra dev --open</Terminal>
+
+Open a specific path:
+
+<Terminal>pyra dev --open /dashboard</Terminal>
+
+### `--cors`
+
+Enable CORS for all origins:
+
+<Terminal>pyra dev --cors</Terminal>
+
+### `--strictPort`
+
+Exit if the specified port is already in use:
+
+<Terminal>pyra dev --port 3000 --strictPort</Terminal>
+
+### `--force`
+
+Force dependency pre-bundling:
+
+<Terminal>pyra dev --force</Terminal>
+
+Useful when dependencies aren't updating correctly.
+
+## Examples
+
+### Basic Development
+
+<Terminal>pyra dev</Terminal>
+
+Output:
+```
+  PYRA v1.0.0  ready in 234 ms
+
+  ➜  Local:   http://localhost:3000/
+  ➜  Network: use --host to expose
+```
+
+### Custom Port with Auto-Open
+
+<Terminal>pyra dev --port 8080 --open</Terminal>
+
+### Network Access
+
+<Terminal>pyra dev --host</Terminal>
+
+Output:
+```
+  PYRA v1.0.0  ready in 234 ms
+
+  ➜  Local:   http://localhost:3000/
+  ➜  Network: http://192.168.1.100:3000/
+```
+
+### Development with HTTPS
+
+<Terminal>pyra dev --https</Terminal>
+
+Pyra will generate a self-signed certificate automatically.
+
+<Callout type="warn">
+  Self-signed certificates will show a browser warning. This is normal for local development.
+</Callout>
+
+## Configuration
+
+Configure the dev server in `pyra.config.ts`:
+
+<GradientCode language="typescript" title="pyra.config.ts">
+{`import { defineConfig } from 'pyra';
+
+export default defineConfig({
+  server: {
+    port: 3000,
+    host: true,
+    open: true,
+    cors: true,
+    
+    // Custom HTTPS certificates
+    https: {
+      key: './certs/key.pem',
+      cert: './certs/cert.pem'
+    },
+    
+    // Proxy API requests
+    proxy: {
+      '/api': {
+        target: 'http://localhost:4000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\\/api/, '')
+      }
+    },
+    
+    // Custom middleware
+    middlewares: [
+      (req, res, next) => {
+        // Custom logic
+        next();
+      }
+    ]
+  }
+});`}
+</GradientCode>
+
+## Hot Module Replacement
+
+Pyra's HMR is enabled by default and works automatically for:
+
+- **React** - Preserves component state
+- **Vue** - Preserves component state
+- **CSS** - Updates without page reload
+- **Static assets** - Updates without page reload
+
+### HMR API
+
+For advanced use cases, use the HMR API:
+
+<GradientCode language="typescript">
+{`if (import.meta.hot) {
+  // Accept updates for this module
+  import.meta.hot.accept();
+  
+  // Accept updates for a dependency
+  import.meta.hot.accept('./dep.ts', (newDep) => {
+    // Handle the updated dependency
+  });
+  
+  // Dispose callback
+  import.meta.hot.dispose((data) => {
+    // Cleanup before update
+  });
+  
+  // Custom events
+  import.meta.hot.on('custom-event', (data) => {
+    console.log('Custom event:', data);
+  });
+}`}
+</GradientCode>
+
+## Proxy Configuration
+
+Proxy API requests during development:
+
+<GradientCode language="typescript" title="pyra.config.ts">
+{`export default defineConfig({
+  server: {
+    proxy: {
+      // String shorthand
+      '/api': 'http://localhost:4000',
+      
+      // With options
+      '/api/v2': {
+        target: 'http://localhost:4000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\\/api\\/v2/, '/v2')
+      },
+      
+      // WebSocket proxy
+      '/socket.io': {
+        target: 'ws://localhost:4000',
+        ws: true
+      }
+    }
+  }
+});`}
+</GradientCode>
+
+## Environment Variables
+
+Access environment variables in dev mode:
+
+<GradientCode language="typescript">
+{`// .env.development
+PYRA_API_URL=http://localhost:4000
+PYRA_DEBUG=true
+
+// In your code
+const apiUrl = import.meta.env.PYRA_API_URL;
+const debug = import.meta.env.PYRA_DEBUG === 'true';`}
+</GradientCode>
+
+<Callout type="note">
+  Only variables prefixed with `PYRA_` are exposed to client code. See [Environment Variables](/docs/guides/environment-variables) for details.
+</Callout>
+
+## Performance Tips
+
+### Pre-bundle Dependencies
+
+Pyra automatically pre-bundles dependencies, but you can optimize:
+
+<GradientCode language="typescript" title="pyra.config.ts">
+{`export default defineConfig({
+  optimizeDeps: {
+    include: ['lodash', 'date-fns'],
+    exclude: ['@my-local-package']
+  }
+});`}
+</GradientCode>
+
+### Disable Features
+
+For faster startup, disable unused features:
+
+<GradientCode language="typescript" title="pyra.config.ts">
+{`export default defineConfig({
+  server: {
+    hmr: false,  // Disable HMR
+    cors: false  // Disable CORS
+  }
+});`}
+</GradientCode>
+
+## Troubleshooting
+
+### Port Already in Use
+
+If port 3000 is taken, Pyra tries the next available port. To force a specific port:
+
+<Terminal>pyra dev --port 3000 --strictPort</Terminal>
+
+### Dependencies Not Updating
+
+Force re-bundle dependencies:
+
+<Terminal>pyra dev --force</Terminal>
+
+### Slow Startup
+
+Check which dependencies are being pre-bundled:
+
+<Terminal>pyra dev --debug</Terminal>
+
+Consider excluding large dependencies that don't need pre-bundling.
+
+## Next Steps
+
+- [pyra build](/docs/cli/build) - Build for production
+- [pyra preview](/docs/cli/preview) - Preview production build
+- [Server Options](/docs/configuration/server-options) - Advanced server config

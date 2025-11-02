@@ -1,0 +1,119 @@
+---
+title: Pyra.js Documentation
+description: Complete documentation for Pyra.js - a blazing-fast TypeScript-first build tool.
+---
+
+import { Link } from 'react-router-dom';
+import Callout from './components/Callout';
+import Badge from './components/Badge';
+
+# Welcome to Pyra.js Documentation
+
+<p className="text-2xl text-gray-300 leading-relaxed mb-8">
+  A blazing-fast, TypeScript-first build tool that ignites your frontend development workflow.
+</p>
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-12">
+  <Link to="/docs/introduction/overview" className="group p-6 rounded-xl bg-gradient-to-br from-gray-900/50 to-gray-800/30 border border-gray-800 hover:border-violet-600/50 transition-all duration-300">
+    <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-violet-400 transition-colors">
+      📚 Introduction
+    </h3>
+    <p className="text-gray-400">
+      Learn what Pyra.js is and the philosophy behind it.
+    </p>
+  </Link>
+
+  <Link to="/docs/getting-started/installation" className="group p-6 rounded-xl bg-gradient-to-br from-gray-900/50 to-gray-800/30 border border-gray-800 hover:border-amber-600/50 transition-all duration-300">
+    <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors">
+      🚀 Quick Start
+    </h3>
+    <p className="text-gray-400">
+      Get up and running with Pyra.js in under 60 seconds.
+    </p>
+  </Link>
+
+  <Link to="/docs/configuration/overview" className="group p-6 rounded-xl bg-gradient-to-br from-gray-900/50 to-gray-800/30 border border-gray-800 hover:border-rose-600/50 transition-all duration-300">
+    <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-rose-400 transition-colors">
+      ⚙️ Configuration
+    </h3>
+    <p className="text-gray-400">
+      Customize Pyra.js for your project's needs.
+    </p>
+  </Link>
+
+  <Link to="/docs/plugins/overview" className="group p-6 rounded-xl bg-gradient-to-br from-gray-900/50 to-gray-800/30 border border-gray-800 hover:border-violet-600/50 transition-all duration-300">
+    <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-violet-400 transition-colors">
+      🔌 Plugins
+    </h3>
+    <p className="text-gray-400">
+      Extend functionality with the plugin system.
+    </p>
+  </Link>
+</div>
+
+<Callout type="tip">
+  <strong>New to Pyra.js?</strong> Start with the <Link to="/docs/getting-started/quick-start" className="text-amber-400 hover:text-amber-300">Quick Start Guide</Link> to create your first project.
+</Callout>
+
+## Features
+
+<div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-8">
+  <div className="p-4 rounded-lg bg-gray-900/50 border border-gray-800">
+    <div className="text-3xl mb-2">⚡</div>
+    <h4 className="text-lg font-semibold text-white mb-2">Lightning Fast</h4>
+    <p className="text-sm text-gray-400">Native-speed bundling with instant HMR</p>
+  </div>
+
+  <div className="p-4 rounded-lg bg-gray-900/50 border border-gray-800">
+    <div className="text-3xl mb-2">🎯</div>
+    <h4 className="text-lg font-semibold text-white mb-2">TypeScript First</h4>
+    <p className="text-sm text-gray-400">Full type safety out of the box</p>
+  </div>
+
+  <div className="p-4 rounded-lg bg-gray-900/50 border border-gray-800">
+    <div className="text-3xl mb-2">📦</div>
+    <h4 className="text-lg font-semibold text-white mb-2">Zero Config</h4>
+    <p className="text-sm text-gray-400">Intelligent defaults that just work</p>
+  </div>
+</div>
+
+## Documentation Sections
+
+### Getting Started
+- [Installation](/docs/getting-started/installation) - Install Pyra.js
+- [Quick Start](/docs/getting-started/quick-start) - Create your first project
+- [Project Structure](/docs/getting-started/project-structure) - Understand the file structure
+
+### Configuration
+- [Overview](/docs/configuration/overview) - Configuration basics
+- [Server Options](/docs/configuration/server-options) - Dev server config
+- [Build Options](/docs/configuration/build-options) - Production build settings
+
+### CLI Reference
+- [pyra dev](/docs/cli/dev) - Development server
+- [pyra build](/docs/cli/build) - Production build
+- [pyra preview](/docs/cli/preview) - Preview build locally
+
+### Guides
+- [Environment Variables](/docs/guides/environment-variables) - Manage env vars
+- [Path Aliases](/docs/guides/path-aliases) - Configure import aliases
+- [SSR & Static Export](/docs/guides/ssr-static-export) - Server-side rendering
+
+### API Reference
+- [Config Types](/docs/api/config-types) - TypeScript types
+- [Plugin Types](/docs/api/plugin-types) - Plugin API types
+- [JavaScript API](/docs/api/javascript-api) - Programmatic API
+
+<Callout type="note">
+  This documentation is for Pyra.js <Badge variant="mvp">v1.0.0</Badge>. Looking for a different version? Check the version selector in the header.
+</Callout>
+
+## Community
+
+- **GitHub**: [github.com/pyra-js/pyra](https://github.com/pyra-js/pyra)
+- **Discord**: [discord.gg/pyra](https://discord.gg/pyra)
+- **Twitter**: [@pyrajs](https://twitter.com/pyrajs)
+
+## Contributing
+
+Pyra.js is open source and welcomes contributions! Check out our [Contributing Guide](https://github.com/pyra-js/pyra/blob/main/CONTRIBUTING.md) to get started.

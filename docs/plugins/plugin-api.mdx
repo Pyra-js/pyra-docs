@@ -1,0 +1,408 @@
+---
+title: Plugin API
+description: Learn the Pyra.js plugin API and available hooks.
+sidebar_label: Plugin API
+slug: /docs/plugins/plugin-api
+---
+
+import GradientCode from '../components/GradientCode';
+import Callout from '../components/Callout';
+
+# Plugin API
+
+<p className="text-xl text-gray-400 leading-relaxed">
+  Understand the plugin container and available lifecycle hooks.
+</p>
+
+## Plugin Interface
+
+A Pyra plugin is an object with a `name` and optional hooks:
+
+<GradientCode language="typescript">
+{`interface Plugin {
+  name: string;
+  enforce?: 'pre' | 'post';
+  apply?: 'serve' | 'build' | ((config: UserConfig, env: ConfigEnv) => boolean);
+  config?: (config: UserConfig, env: ConfigEnv) => UserConfig | null | void;
+  configResolved?: (config: ResolvedConfig) => void | Promise<void>;
+  configureServer?: (server: PyraDevServer) => void | Promise<void>;
+  transformIndexHtml?: (html: string) => string | Promise<string>;
+  resolveId?: (source: string, importer?: string) => string | null | Promise<string | null>;
+  load?: (id: string) => string | null | Promise<string | null>;
+  transform?: (code: string, id: string) => TransformResult | Promise<TransformResult>;
+  buildStart?: () => void | Promise<void>;
+  buildEnd?: () => void | Promise<void>;
+  closeBundle?: () => void | Promise<void>;
+}`}
+</GradientCode>
+
+## Core Hooks
+
+### config
+
+Modify Pyra config before it's resolved:
+
+<GradientCode language="typescript">
+{`export function myPlugin(): Plugin {
+  return {
+    name: 'my-plugin',
+    config(config, { command, mode }) {
+      if (command === 'build') {
+        return {
+          build: {
+            minify: true
+          }
+        };
+      }
+    }
+  };
+}`}
+</GradientCode>
+
+### configResolved
+
+Called after config is resolved:
+
+<GradientCode language="typescript">
+{`export function myPlugin(): Plugin {
+  let config: ResolvedConfig;
+  
+  return {
+    name: 'my-plugin',
+    configResolved(resolvedConfig) {
+      config = resolvedConfig;
+      console.log('Final config:', config);
+    }
+  };
+}`}
+</GradientCode>
+
+### configureServer
+
+Add custom middleware to dev server:
+
+<GradientCode language="typescript">
+{`export function myPlugin(): Plugin {
+  return {
+    name: 'my-plugin',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        if (req.url === '/custom') {
+          res.end('Custom response');
+        } else {
+          next();
+        }
+      });
+    }
+  };
+}`}
+</GradientCode>
+
+## Transform Hooks
+
+### resolveId
+
+Resolve module imports:
+
+<GradientCode language="typescript">
+{`export function virtualModulePlugin(): Plugin {
+  const virtualModuleId = 'virtual:my-module';
+  
+  return {
+    name: 'virtual-module',
+    resolveId(id) {
+      if (id === virtualModuleId) {
+        return virtualModuleId;
+      }
+    },
+    load(id) {
+      if (id === virtualModuleId) {
+        return 'export default "This is virtual!"';
+      }
+    }
+  };
+}`}
+</GradientCode>
+
+### load
+
+Load module content:
+
+<GradientCode language="typescript">
+{`export function customLoaderPlugin(): Plugin {
+  return {
+    name: 'custom-loader',
+    load(id) {
+      if (id.endsWith('.custom')) {
+        const content = fs.readFileSync(id, 'utf-8');
+        return \`export default \${JSON.stringify(content)}\`;
+      }
+    }
+  };
+}`}
+</GradientCode>
+
+### transform
+
+Transform module code:
+
+<GradientCode language="typescript">
+{`export function transformPlugin(): Plugin {
+  return {
+    name: 'transform-plugin',
+    transform(code, id) {
+      if (id.endsWith('.js')) {
+        // Transform the code
+        const transformed = code.replace(/OLD/g, 'NEW');
+        
+        return {
+          code: transformed,
+          map: null // or generate source map
+        };
+      }
+    }
+  };
+}`}
+</GradientCode>
+
+## Build Hooks
+
+### buildStart
+
+Called when build starts:
+
+<GradientCode language="typescript">
+{`export function buildPlugin(): Plugin {
+  return {
+    name: 'build-plugin',
+    buildStart() {
+      console.log('Build starting...');
+    }
+  };
+}`}
+</GradientCode>
+
+### buildEnd
+
+Called when build ends:
+
+<GradientCode language="typescript">
+{`export function buildPlugin(): Plugin {
+  return {
+    name: 'build-plugin',
+    buildEnd() {
+      console.log('Build complete!');
+    }
+  };
+}`}
+</GradientCode>
+
+### generateBundle
+
+Modify output before writing:
+
+<GradientCode language="typescript">
+{`export function bundlePlugin(): Plugin {
+  return {
+    name: 'bundle-plugin',
+    generateBundle(options, bundle) {
+      // Add a custom file to output
+      this.emitFile({
+        type: 'asset',
+        fileName: 'custom.txt',
+        source: 'Custom content'
+      });
+    }
+  };
+}`}
+</GradientCode>
+
+## HTML Transform
+
+### transformIndexHtml
+
+Transform the HTML entry point:
+
+<GradientCode language="typescript">
+{`export function htmlPlugin(): Plugin {
+  return {
+    name: 'html-plugin',
+    transformIndexHtml(html) {
+      return html.replace(
+        '</head>',
+        '<script>console.log("Injected!")</script></head>'
+      );
+    }
+  };
+}`}
+</GradientCode>
+
+## Plugin Ordering
+
+### enforce
+
+Control when plugin runs:
+
+<GradientCode language="typescript">
+{`export function prePlugin(): Plugin {
+  return {
+    name: 'pre-plugin',
+    enforce: 'pre', // Run before core plugins
+    transform(code, id) {
+      // Runs first
+    }
+  };
+}
+
+export function postPlugin(): Plugin {
+  return {
+    name: 'post-plugin',
+    enforce: 'post', // Run after core plugins
+    transform(code, id) {
+      // Runs last
+    }
+  };
+}`}
+</GradientCode>
+
+### apply
+
+Conditionally apply plugin:
+
+<GradientCode language="typescript">
+{`export function devOnlyPlugin(): Plugin {
+  return {
+    name: 'dev-only',
+    apply: 'serve', // Only in dev mode
+    configureServer(server) {
+      // Dev-only logic
+    }
+  };
+}
+
+export function buildOnlyPlugin(): Plugin {
+  return {
+    name: 'build-only',
+    apply: 'build', // Only in build mode
+    buildStart() {
+      // Build-only logic
+    }
+  };
+}`}
+</GradientCode>
+
+## Plugin Context
+
+Access plugin context in hooks:
+
+<GradientCode language="typescript">
+{`export function contextPlugin(): Plugin {
+  return {
+    name: 'context-plugin',
+    transform(code, id) {
+      // Emit a file
+      this.emitFile({
+        type: 'asset',
+        fileName: 'generated.json',
+        source: JSON.stringify({ id })
+      });
+      
+      // Add watch file
+      this.addWatchFile('/path/to/file');
+      
+      // Get module info
+      const info = this.getModuleInfo(id);
+      
+      return code;
+    }
+  };
+}`}
+</GradientCode>
+
+<Callout type="note">
+  The plugin context (`this`) provides utilities for emitting files, watching files, and accessing module information.
+</Callout>
+
+## Complete Example
+
+<GradientCode language="typescript">
+{`import { Plugin } from 'pyra';
+import fs from 'fs';
+
+export interface MyPluginOptions {
+  include?: string[];
+  exclude?: string[];
+}
+
+export function myPlugin(options: MyPluginOptions = {}): Plugin {
+  let config: ResolvedConfig;
+  
+  return {
+    name: 'my-plugin',
+    
+    // Modify config
+    config(userConfig) {
+      return {
+        define: {
+          __PLUGIN_ENABLED__: true
+        }
+      };
+    },
+    
+    // Store resolved config
+    configResolved(resolvedConfig) {
+      config = resolvedConfig;
+    },
+    
+    // Add dev server middleware
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        if (req.url === '/plugin-status') {
+          res.end(JSON.stringify({ status: 'active' }));
+        } else {
+          next();
+        }
+      });
+    },
+    
+    // Resolve virtual modules
+    resolveId(id) {
+      if (id === 'virtual:config') {
+        return id;
+      }
+    },
+    
+    // Load virtual modules
+    load(id) {
+      if (id === 'virtual:config') {
+        return \`export default \${JSON.stringify(config)}\`;
+      }
+    },
+    
+    // Transform code
+    transform(code, id) {
+      if (id.endsWith('.custom')) {
+        return {
+          code: \`export default \${JSON.stringify(code)}\`,
+          map: null
+        };
+      }
+    },
+    
+    // Build lifecycle
+    buildStart() {
+      console.log('Build started');
+    },
+    
+    buildEnd() {
+      console.log('Build ended');
+    }
+  };
+}`}
+</GradientCode>
+
+## Next Steps
+
+- [Creating Plugins](/docs/plugins/creating-plugins) - Build your own plugin
+- [Official Plugins](/docs/plugins/official-plugins) - Explore official plugins
+- [Plugin Types](/docs/api/plugin-types) - TypeScript types
