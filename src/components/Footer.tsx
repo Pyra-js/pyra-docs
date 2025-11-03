@@ -1,20 +1,22 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+
+const links = [
+  { label: "Documentation", href: "/docs" },
+  { label: "GitHub", href: "https://github.com/Simpleboi/Pyra" },
+  { label: "Discord", href: "https://discord.gg/DCszF2VrSm" },
+  { label: "Instagram", href: "https://www.instagram.com/nate.jsx/" },
+];
 
 export default function Footer() {
-  const links = [
-    { label: "Documentation", href: "#" },
-    { label: "GitHub", href: "#" },
-    { label: "Discord", href: "#" },
-    { label: "Twitter", href: "#" },
-  ];
-
   return (
     <footer className="relative py-12 px-6 mt-24">
       {/* Gradient divider */}
       <div
         className="absolute top-0 left-0 right-0 h-px"
         style={{
-          background: "linear-gradient(90deg, transparent, #FFB347, #FF5C38, #9333EA, transparent)",
+          background:
+            "linear-gradient(90deg, transparent, #FFB347, #FF5C38, #9333EA, transparent)",
         }}
       />
 
@@ -40,14 +42,16 @@ export default function Footer() {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             {links.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="text-gray-400 hover:text-white transition-colors duration-200 relative group"
-              >
-                {link.label}
-                <span className="absolute bottom-0 left-0 w-0 h-px bg-gradient-to-r from-amber-400 via-rose-500 to-violet-600 group-hover:w-full transition-all duration-300" />
-              </a>
+              <Link to={link.href}>
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="text-gray-400 hover:text-white transition-colors duration-200 relative group"
+                >
+                  {link.label}
+                  <span className="absolute bottom-0 left-0 w-0 h-px bg-gradient-to-r from-amber-400 via-rose-500 to-violet-600 group-hover:w-full transition-all duration-300" />
+                </a>
+              </Link>
             ))}
           </motion.nav>
 
@@ -58,7 +62,7 @@ export default function Footer() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            © 2024 Pyra.js
+            © 2025 Pyra.js
           </motion.p>
         </div>
       </div>

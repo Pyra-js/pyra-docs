@@ -5,7 +5,7 @@ import DocsLayout from "./components/docs/DocsLayout";
 import { Callout, Step, CodeBlock } from "./components/docs/MDXComponents";
 
 // Import MDX pages
-import DocsIndex from "../docs/index.mdx";
+import DocsIndex from "../docs/introduction.mdx";
 import Installation from "../docs/installation.mdx";
 import ProjectStructure from "../docs/project-structure.mdx";
 import Configuration from "../docs/configuration.mdx";

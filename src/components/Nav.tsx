@@ -31,7 +31,7 @@ export default function Navbar() {
             <a href="#why-pyra" className="text-gray-300 hover:text-white transition-colors">
               Why Pyra
             </a>
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors">
+            <a href="https://github.com/Simpleboi/Pyra" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors">
               <Github className="w-5 h-5" />
             </a>
             <Link to="/docs">
@@ -72,7 +72,7 @@ export default function Navbar() {
             </a>
             <a 
               href="#why-pyra" 
-              className="block text-gray-300 hover:text-white transition-colors"
+              className="block text-gray-300 hover:text-white transition-colors pb-4"
               onClick={() => setMobileMenuOpen(false)}
             >
               Why Pyra

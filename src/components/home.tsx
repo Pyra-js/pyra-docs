@@ -2,6 +2,7 @@ import AnimatedBackground from "./AnimatedBackground";
 import HeroSection from "./homepage/HeroSection";
 import FeaturesSection from "./FeaturesSection";
 import { WhyPyraSection } from "./homepage/WhyPyra";
+import { QuickStartSection } from "./homepage/GetStarted";
 import Navbar from "./Nav";
 import Footer from "./Footer";
 
@@ -13,8 +14,9 @@ function Home() {
 
       <div className="relative z-10">
         <HeroSection />
-        <FeaturesSection />
         <WhyPyraSection />
+        <QuickStartSection />
+        <FeaturesSection />
         <Footer />
       </div>
     </div>
