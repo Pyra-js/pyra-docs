@@ -14,6 +14,7 @@ import EnvVariables from "../docs/env-variables.mdx";
 import Building from "../docs/building.mdx";
 import Deployment from "../docs/deployment.mdx";
 import Troubleshooting from "../docs/troubleshooting.mdx";
+import Cli from "../docs/cli.mdx";
 
 // MDX components available to all MDX files
 const mdxComponents = {
@@ -96,6 +97,14 @@ function App() {
           element={
             <DocsLayout>
               <Troubleshooting />
+            </DocsLayout>
+          }
+        />
+        <Route
+          path="/docs/cli"
+          element={
+            <DocsLayout>
+              <Cli />
             </DocsLayout>
           }
         />

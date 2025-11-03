@@ -1,37 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Zap, FolderTree, Settings, Puzzle, FileText, Rocket, Upload, HelpCircle, Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { SIDEBAR_ITEMS } from '@/data/sidebar';
+import { Menu, X } from 'lucide-react';
 
 interface DocsLayoutProps {
   children: React.ReactNode;
 }
 
-const sidebarItems = [
-  {
-    category: 'Getting Started',
-    items: [
-      { path: '/docs', label: 'Introduction', icon: Home },
-      { path: '/docs/installation', label: 'Installation', icon: Zap },
-      { path: '/docs/project-structure', label: 'Project Structure', icon: FolderTree },
-    ],
-  },
-  {
-    category: 'Configuration',
-    items: [
-      { path: '/docs/configuration', label: 'Configuration', icon: Settings },
-      { path: '/docs/plugins', label: 'Plugins', icon: Puzzle },
-      { path: '/docs/env-variables', label: 'Environment Variables', icon: FileText },
-    ],
-  },
-  {
-    category: 'Guides',
-    items: [
-      { path: '/docs/building', label: 'Building for Production', icon: Rocket },
-      { path: '/docs/deployment', label: 'Deployment', icon: Upload },
-      { path: '/docs/troubleshooting', label: 'Troubleshooting', icon: HelpCircle },
-    ],
-  },
-];
 
 export default function DocsLayout({ children }: DocsLayoutProps) {
   const location = useLocation();
@@ -81,7 +56,7 @@ export default function DocsLayout({ children }: DocsLayoutProps) {
           border-r border-gray-800 lg:border-0
         `}>
           <nav className="sticky top-24 space-y-6 p-4 lg:p-0">
-            {sidebarItems.map((section) => (
+            {SIDEBAR_ITEMS.map((section) => (
               <div key={section.category}>
                 <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-4">
                   {section.category}

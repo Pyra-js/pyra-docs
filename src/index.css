@@ -97,7 +97,7 @@
   }
 
   .prose-docs h1 {
-    @apply text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-amber-400 via-rose-500 to-violet-600 bg-clip-text text-transparent leading-tight;
+    @apply text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-amber-400 via-rose-500 to-violet-600 bg-clip-text text-transparent leading-tight pb-2;
   }
 
   .prose-docs h2 {
@@ -124,9 +124,9 @@
     @apply text-gray-200 font-semibold;
   }
 
-  /* .prose-docs code {
+  .prose-docs code {
     @apply text-amber-400 bg-gray-900/50 px-1.5 py-0.5 rounded text-sm font-mono;
-  } */
+  }
 
   .prose-docs pre {
     @apply my-6 rounded-lg overflow-hidden;

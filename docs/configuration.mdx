@@ -1,26 +1,143 @@
-# Configuration
+# ⚙️ Configuration
 
-Customize Pyra.js to fit your project needs.
+Pyra’s configuration is designed to be familiar, minimally intrusive, and powerfully extensible. You can get productive with zero config, then layer in options gradually as your project grows. This page explains how Pyra discovers configuration files, how typing and merging work, how environment variables are loaded, and how to tune the dev server, resolver, bundler, and plugin system for real-world projects.
 
-## Config File
 
-Create a `pyra.config.ts` file in your project root:
+## 🔧 Config File
+
+Pyra looks for a configuration file in your project root with one of several supported names: `pyra.config.ts`, `pyra.config.mts`, `pyra.config.js`, or `pyra.config.cjs`. TypeScript is recommended because it provides editor hints and static safety out of the box. If multiple files are present, Pyra chooses the first match in that order.
+
+The most common setup is a `pyra.config.ts` file, which you can create manually or generate using:
+
+```bash
+pyra init
+```
+Inside `pyra.config.ts`, you can define build options, plugins, aliases, and more:
 
 ```typescript
-import { defineConfig } from 'pyra';
+import { defineConfig } from "pyra";
 
 export default defineConfig({
+  entry: "./src/main.ts",
+  outDir: "dist",
   plugins: [],
-  build: {
-    outDir: 'dist',
-    minify: true,
-  },
-  server: {
-    port: 3000,
-    open: true,
+});
+```
+Pyra’s config system merges intelligently with environment variables, CLI flags, and defaults, no need for long boilerplates.
+
+
+Configuration is exported as a default using `defineConfig`, which gives you intellisense and guards against typos. If your setup requires ESM-only or CJS-only environments, use the `.mts` or `.cjs` variants respectively. When necessary, Pyra’s loader will transpile TS on the fly for the config file itself.
+
+
+## Merging and Modes 
+
+Pyra merges configuration from three places: defaults (built-in), your config file, and CLI flags. CLI flags always win, then config, then defaults. This means you can keep your base config simple and override behavior per command without forking files. 
+
+Pyra also exposes a **mode** concept, typically "dev", "build", or "preview", which you can branch on inside your `defineConfig` call. Mode-aware configuration lets you switch targets, sourcemaps, or proxies based on the active command.
+
+```ts
+export default defineConfig(({ mode }) => {
+  const dev = mode === "dev";
+  return {
+    sourcemap: dev ? "inline" : false,
+    minify: !dev,
+  };
+});
+```
+
+## Environment Variables 
+
+Environment files follow a layered convention that should feel natural if you’ve used modern bundlers. Pyra loads from `.env`, `.env.local`, and `.env.[mode]` (for example, `.env.dev` or `.env.build`), merging them in that order with later files taking precedence. By default, only variables prefixed with `PYRA_` (or a prefix you set) are exposed to your client bundle to prevent accidental leakage of secrets. Runtime-only secrets should remain unprefixed and read by your server code or deployment platform.
+
+Inside the app, you can access injected variables via `import.meta.env` in client code and `process.env` in server code. Keep in mind that `import.meta.env` values are statically replaced at build time, so treat them like compile-time constants. If you need to adjust the prefix, set envPrefix in your config.
+
+```ts
+export default defineConfig({
+  envPrefix: ["PYRA_", "PUBLIC_"], // both prefixes are allowed
+});
+```
+
+## Module Resolution & Aliases
+
+Larger codebases benefit from stable import paths. Pyra supports alias mapping through a `resolve.alias` field that mirrors what you might know from Vite/Rollup. If your project uses `tsconfig.json` path mapping, Pyra can optionally read those paths and hydrate aliases automatically to keep TS and bundler resolution aligned.
+
+```ts
+export default defineConfig({
+  resolve: {
+    alias: {
+      "@": "/src",
+      "@utils": "/src/shared/utils",
+    },
+    extensions: [".ts", ".tsx", ".js", ".jsx", ".mjs"], // resolution order
+    external: ["react", "react-dom"], // mark packages as external (library builds)
   },
 });
 ```
+Use `external` when building libraries to avoid bundling peer dependencies. This produces smaller outputs and respects consumer versions.
+
+
+## Dev Server Controls
+
+The development server prioritizes fast feedback with HMR, file watching, and clear diagnostics. You can control listening behavior, HTTPS, proxies, CORS, and open-on-start, among other developer conveniences. Proxies are useful when your API runs elsewhere; Pyra can forward `/api` calls during development to avoid CORS headaches without changing frontend code.
+
+```ts
+export default defineConfig({
+  server: {
+    host: true,     // 0.0.0.0 for LAN testing
+    port: 5173,
+    https: false,   // or provide { key, cert } for local TLS
+    open: true,
+    cors: true,
+    proxy: {
+      "/api": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  },
+});
+```
+If you’re on Windows or WSL and notice sluggish file watching, you can switch the watcher implementation via `server.watch` to match your environment more closely.
+
+## Build Pipeline & Output
+
+Pyra’s production builds emphasize speed and predictability. Common options include the output directory, entry points, source maps, target environments, JSX transforms, minification strategy, and chunk splitting. If you’re authoring an npm library, you can emit multiple formats and optionally generate type declarations.
+
+```ts
+export default defineConfig({
+  entry: "./src/main.ts",
+  outDir: "dist",
+  target: "es2020",          // or "esnext" for modern-only
+  sourcemap: true,           // "inline" | true | false
+  minify: "esbuild",         // "esbuild" | "terser" | false
+  splitting: true,           // enable code-splitting
+  formats: ["esm", "cjs"],   // library publishing
+  clean: true,               // remove outDir before builds
+});
+```
+For frameworks using JSX, set JSX factory/runtime if you’re not using defaults. For SSR or Node targets, prefer a modern `target` but ensure externalization of native dependencies or Node built-ins.
+
+## CSS, PostCSS & Assets
+
+Pyra ships with sensible defaults for CSS handling and supports PostCSS when a `postcss.config` is present. CSS modules are recognized by `*.module.css` and scoped automatically. Preprocessors like Sass or Less work if installed and referenced by your imports. Asset handling (images, fonts) can inline small files and emit larger ones to the assets directory, which you can tune via thresholds and naming patterns.
+
+```ts
+export default defineConfig({
+  css: {
+    modules: {
+      localsConvention: "camelCaseOnly",
+      generateScopedName: "[local]__[hash:base64:5]",
+    },
+    postcss: true, // auto-detected if config exists
+  },
+  assets: {
+    inlineLimit: 4096,           // bytes; inline small assets as data URIs
+    fileName: "assets/[name]-[hash][extname]",
+  },
+});
+```
+When mixing Tailwind with modules, consider constraining utility-first classes to global styles and reserve modules for component-scoped overrides to keep a clean mental model.
 
 ## Build Options
 
