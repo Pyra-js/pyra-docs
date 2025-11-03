@@ -1,34 +1,84 @@
-# Deployment
+# 🌐 Deployment
 
-Deploy your Pyra.js app to production.
+Once you’ve built your Pyra project for production, deployment is simple.  
+Pyra outputs fully static, pre-optimized assets that work on **any modern host**, whether you’re using cloud platforms like **Netlify**, **Vercel**, **Firebase**, or your own custom server.
 
-## Vercel
+This page explains how to deploy Pyra builds, automate CI/CD pipelines, and configure best practices for performance and reliability.
 
+## 🪶 Deploying to Netlify
+
+[Netlify]("https://www.netlify.com/") automatically detects Pyra projects and builds them with a zero-config setup.
+If you’re using the CLI or dashboard, use the following settings:
+
+Build command
+
+```bash
+pyra build
+```
+
+Publish directory
+
+```bash
+dist
+```
+
+You can deploy directly from your local terminal:
+
+```bash
+npm install -g netlify-cli
+netlify deploy --prod --dir=dist
+```
+
+Or set up automatic builds by connecting your GitHub repo, Netlify will run `pyra build` on each push.
+
+
+## ⚡ Deploying to Vercel
+
+[Vercel]("https://vercel.com/") works perfectly with Pyra. It automatically detects `pyra build` as your build step and `dist/` as your output.
+
+To deploy: 
+
+install the cli
 ```bash
 npm install -g vercel
 vercel
 ```
-
-## Netlify
+run:
 
 ```bash
-npm install -g netlify-cli
-netlify deploy --prod
+vercel
 ```
 
-## Static Hosting
+Confirm with the build command. That’s it, Vercel will deploy and give you a preview link after each push.
 
-Build your app and upload the `dist` folder to any static host:
 
-- GitHub Pages
-- Cloudflare Pages
-- AWS S3
-- Firebase Hosting
+## 🔥 Deploying to Firebase Hosting
 
-## Build Settings
+If you use Firebase Hosting, first install Firebase CLI and initialize hosting:
 
-Most platforms need these settings:
+```bash
+npm install -g firebase-tools
+firebase login
+firebase init hosting
+```
+When prompted: 
 
-- **Build command:** `npm run build`
-- **Output directory:** `dist`
-- **Node version:** 18+
+```bash
+Public directory: dist
+Single-page app rewrite: Yes
+Build command: pyra build
+```
+
+Once configured: 
+
+```bash
+pyra build
+firebase deploy
+```
+Firebase will upload and serve your static files globally over HTTPS with CDN caching.
+
+Deploying a Pyra project is as simple as building and uploading the `dist/` folder.
+
+Every popular host supports Pyra’s output format out of the box, giving you flexibility to deploy anywhere, from cloud platforms to your own servers.
+
+**Pyra** | fast to build, even faster to deploy. 🔺
