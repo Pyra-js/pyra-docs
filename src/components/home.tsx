@@ -3,6 +3,7 @@ import HeroSection from "./homepage/HeroSection";
 import FeaturesSection from "./FeaturesSection";
 import { WhyPyraSection } from "./homepage/WhyPyra";
 import { QuickStartSection } from "./homepage/GetStarted";
+import CreatorSection from "./homepage/PyraTeam";
 import Navbar from "./Nav";
 import Footer from "./Footer";
 
@@ -17,6 +18,7 @@ function Home() {
         <WhyPyraSection />
         <QuickStartSection />
         <FeaturesSection />
+        <CreatorSection />
         <Footer />
       </div>
     </div>

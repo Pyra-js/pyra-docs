@@ -1,141 +1,177 @@
 @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
+@tailwind components;
+@tailwind utilities;
 
-  @layer base {
-    :root {
-      --background: 0 0% 100%;
-      --foreground: 222.2 84% 4.9%;
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
 
-      --card: 0 0% 100%;
-      --card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
 
-      --popover: 0 0% 100%;
-      --popover-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
 
-      --primary: 222.2 47.4% 11.2%;
-      --primary-foreground: 210 40% 98%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
 
-      --secondary: 210 40% 96.1%;
-      --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
-      --muted: 210 40% 96.1%;
-      --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
 
-      --accent: 210 40% 96.1%;
-      --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
 
-      --destructive: 0 84.2% 60.2%;
-      --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
 
-      --border: 214.3 31.8% 91.4%;
-      --input: 214.3 31.8% 91.4%;
-      --ring: 222.2 84% 4.9%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
 
-      --radius: 0.5rem;
-    }
-
-    .dark {
-      --background: 222.2 84% 4.9%;
-      --foreground: 210 40% 98%;
-
-      --card: 222.2 84% 4.9%;
-      --card-foreground: 210 40% 98%;
-
-      --popover: 222.2 84% 4.9%;
-      --popover-foreground: 210 40% 98%;
-
-      --primary: 210 40% 98%;
-      --primary-foreground: 222.2 47.4% 11.2%;
-
-      --secondary: 217.2 32.6% 17.5%;
-      --secondary-foreground: 210 40% 98%;
-
-      --muted: 217.2 32.6% 17.5%;
-      --muted-foreground: 215 20.2% 65.1%;
-
-      --accent: 217.2 32.6% 17.5%;
-      --accent-foreground: 210 40% 98%;
-
-      --destructive: 0 62.8% 30.6%;
-      --destructive-foreground: 210 40% 98%;
-
-      --border: 217.2 32.6% 17.5%;
-      --input: 217.2 32.6% 17.5%;
-      --ring: 212.7 26.8% 83.9%;
-    }
+    --radius: 0.5rem;
   }
 
-  @layer base {
-    * {
-      @apply border-border;
-    }
-    body {
-      @apply bg-background text-foreground;
-    }
-  }
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
 
-  @keyframes gradient {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
 
-  .debug {
-    @apply border border-red-500;
-  }
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
 
-  /* Custom MDX Prose Styles */
-  .prose-docs {
-    @apply text-gray-300;
-  }
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
 
-  .prose-docs h1 {
-    @apply text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-amber-400 via-rose-500 to-violet-600 bg-clip-text text-transparent leading-tight pb-2;
-  }
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
 
-  .prose-docs h2 {
-    @apply text-2xl md:text-3xl font-bold text-gray-100 mt-12 mb-4 pb-2 border-b border-gray-800;
-  }
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
 
-  .prose-docs h3 {
-    @apply text-xl md:text-2xl font-semibold text-gray-200 mt-8 mb-3;
-  }
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
 
-  .prose-docs p {
-    @apply text-base md:text-lg leading-relaxed mb-4 text-gray-400;
-  }
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
 
-  .prose-docs ul {
-    @apply space-y-2 my-6 ml-6;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
   }
+}
 
-  .prose-docs li {
-    @apply text-gray-400 leading-relaxed;
+@layer base {
+  * {
+    @apply border-border;
   }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
 
-  .prose-docs strong {
-    @apply text-gray-200 font-semibold;
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
   }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
 
-  .prose-docs code {
-    @apply text-amber-400 bg-gray-900/50 px-1.5 py-0.5 rounded text-sm font-mono;
-  }
+.debug {
+  @apply border border-red-500;
+}
 
-  .prose-docs pre {
-    @apply my-6 rounded-lg overflow-hidden;
-  }
+/* Custom MDX Prose Styles */
+.prose-docs {
+  @apply text-gray-300;
+}
 
-  .prose-docs pre code {
-    @apply bg-transparent px-0 py-0;
-  }
+.prose-docs h1 {
+  @apply text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-amber-400 via-rose-500 to-violet-600 bg-clip-text text-transparent leading-tight pb-2;
+}
 
-  .prose-docs a {
-    @apply text-violet-400 hover:text-violet-300 underline decoration-violet-500/30 hover:decoration-violet-400 transition-colors;
-  }
+.prose-docs h2 {
+  @apply text-2xl md:text-3xl font-bold text-gray-100 mt-12 mb-4 pb-2 border-b border-gray-800;
+}
+
+.prose-docs h3 {
+  @apply text-xl md:text-2xl font-semibold text-gray-200 mt-8 mb-3;
+}
+
+.prose-docs p {
+  @apply text-base md:text-lg leading-relaxed mb-4 text-gray-400;
+}
+
+.prose-docs ul {
+  @apply space-y-2 my-6 ml-6;
+}
+
+.prose-docs li {
+  @apply text-gray-400 leading-relaxed;
+}
+
+.prose-docs strong {
+  @apply text-gray-200 font-semibold;
+}
+
+.prose-docs code {
+  @apply text-amber-400 bg-gray-900/50 px-1.5 py-0.5 rounded text-sm font-mono;
+}
+
+.prose-docs pre {
+  @apply my-6 rounded-lg overflow-hidden;
+}
+
+.prose-docs pre code {
+  @apply bg-transparent px-0 py-0;
+}
+
+.prose-docs a {
+  @apply text-violet-400 hover:text-violet-300 underline decoration-violet-500/30 hover:decoration-violet-400 transition-colors;
+}
+
+.prose-docs table {
+  @apply w-full border-collapse border border-gray-800/70 rounded-lg overflow-hidden my-8;
+}
+
+.prose-docs thead {
+  @apply bg-[#14141a];
+}
+
+.prose-docs th {
+  @apply text-left text-amber-400 font-semibold tracking-wide px-4 py-3 border-b border-gray-700/70 uppercase text-sm;
+}
+
+.prose-docs tbody tr {
+  @apply border-b border-gray-800/70;
+}
+
+.prose-docs tbody tr:nth-child(even) {
+  @apply bg-gray-900/40;
+}
+
+.prose-docs tbody tr:hover {
+  @apply bg-gray-800/60 transition-colors;
+}
+
+.prose-docs td {
+  @apply px-4 py-3 text-gray-300 align-top leading-relaxed;
+}
+
+.prose-docs code {
+  @apply text-amber-400 font-mono text-sm;
+}
+
+.prose-docs caption {
+  @apply text-gray-400 text-sm italic mt-2;
+}

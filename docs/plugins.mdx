@@ -1,47 +1,146 @@
-# Plugins
+# 🧩Plugins
 
-Extend Pyra.js with plugins.
+Extend `Pyra.js` with plugins.
 
-## Official Plugins
+Plugins are the heart of Pyra’s flexibility. They allow you to intercept and extend nearly every part of the system, from configuration loading and dependency resolution to code transformation, bundling, and server behavior.  
 
-### React Plugin
+If Pyra is the engine, plugins are the fuel that let it adapt to any workflow, framework, or build pipeline. Whether you’re writing a small utility or a full-fledged framework integration, the plugin API gives you total control.
 
-```bash
-npm install @pyra/plugin-react
+## 🔥 What Are Plugins?
+
+A **Pyra plugin** is simply an object that implements one or more lifecycle hooks. Each hook gives you access to a different stage of the toolchain, configuration, file resolution, module loading, code transformation, bundling, or post-processing.  
+
+You can think of Pyra’s build process as a series of events. Each plugin can “listen” to certain events and act when they occur. For example, you might write a plugin that injects banners into built files, loads Markdown as components, or rewrites import paths dynamically.
+
+Here’s the simplest possible plugin:
+
+```ts
+import { type PyraPlugin } from "pyra";
+
+export default function helloPlugin(): PyraPlugin {
+  return {
+    name: "hello",
+    buildStart() {
+      console.log("👋 Hello from Pyra!");
+    },
+  };
+}
+```
+You’d then add it to your `pyra.config.ts`:
+
+```ts
+import { defineConfig } from "pyra";
+import helloPlugin from "./plugins/hello";
+
+export default defineConfig({
+  plugins: [helloPlugin()],
+});
 ```
 
-```typescript
-import react from '@pyra/plugin-react';
+## 🧠 How Pyra Loads Plugins
+
+When you run any command like `dev`, `build`, or `preview`, Pyra automatically reads the plugins array from your config. Each plugin runs in the order it appears, unless it specifies `enforce: "pre"` or `enforce: "post"`, which moves it earlier or later in the execution flow.
+
+Pyra also handles plugin composition. If you install multiple plugins that share hooks, Pyra merges them intelligently and passes shared context between them, so transformations are isolated but consistent.
+
+## 🧩 Official Pyra Plugins
+
+Pyra includes a small set of **officially maintained plugins** that serve as first-class integrations for popular front-end frameworks and developer workflows. These plugins ensure compatibility, optimized defaults, and a clean setup experience out of the box.
+
+### 🔹 @pyra/plugin-react
+
+Adds support for React and JSX/TSX transforms using the modern React Refresh system.  
+It automatically enables fast refresh in dev mode and tree-shaking optimizations in production.
+
+```bash
+npm install -D @pyra/plugin-react
+```
+```ts
+import { defineConfig } from "pyra";
+import react from "@pyra/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
 });
 ```
+It features Fast Refresh for instant state-preserving updates, Automatic JSX runtime detection, Support for `.jsx` and `.tsx` files and optimized builds with ESBuild transforms
 
-### Vue Plugin
+### 🔹 @pyra/plugin-vue
+
+Provides seamless Vue 3 single-file component support with hot module reloading, template compilation, and style scoping.
 
 ```bash
-npm install @pyra/plugin-vue
+npm install -D @pyra/plugin-vue
 ```
 
-```typescript
-import vue from '@pyra/plugin-vue';
+```ts
+import { defineConfig } from "pyra";
+import vue from "@pyra/plugin-vue";
 
 export default defineConfig({
   plugins: [vue()],
 });
 ```
+It features `.vue` single-file component parsing, template compiler integration, scoped CSS and PostCSS support, and HMR for Vue components during development
 
-## Creating Custom Plugins
+### 🔹 @pyra/plugin-svelte
 
-```typescript
-export function myPlugin() {
-  return {
-    name: 'my-plugin',
-    transform(code, id) {
-      // Transform code here
-      return code;
-    },
-  };
-}
+Integrates Svelte and SvelteKit workflows directly into Pyra’s dev server and bundler, providing optimized compilation and hot reloading.
+
+```bash
+npm install -D @pyra/plugin-svelte
 ```
+
+```ts
+import { defineConfig } from "pyra";
+import svelte from "@pyra/plugin-svelte";
+
+export default defineConfig({
+  plugins: [svelte()],
+});
+```
+It features Built-in Svelte compiler, Reactive HMR updates, TypeScript + Svelte integration, SSR compatibility for advanced setups
+
+## Lifecycle hooks
+
+Below is an overview of the main hooks available in **Pyra’s Plugin API**.  
+Each hook represents a specific stage in Pyra’s internal lifecycle, from loading and transforming files to dev-server events and build finalization.
+
+| Hook | Stage | Description |
+|------|--------|-------------|
+| `config` | Before load | Mutate or extend the final user configuration before it’s resolved. Useful for injecting defaults or reading environment data. |
+| `resolveId` | Resolution | Intercept and modify import resolution for custom paths, aliases, or virtual modules. |
+| `load` | Load | Provide content for a module that doesn’t exist on disk — often used for virtual files or dynamically generated code. |
+| `transform` | Transform | Modify or compile source code before bundling — perfect for preprocessors, compilers, or macros. |
+| `buildStart` | Build start | Called once before the build begins. Use this for setup, dependency checks, or initial logging. |
+| `buildEnd` | Build end | Called once after build completion. Useful for cleanup, summary reports, or analytics. |
+| `closeBundle` | Finalization | Invoked after the bundle is completely written to disk — great for post-processing or deployment hooks. |
+| `configureServer` | Dev server | Add custom middleware or modify the local development server. Ideal for mock APIs or proxy routes. |
+| `handleHotUpdate` | HMR | React to file changes in development for custom hot reload behavior or live data refreshes. |
+
+Each hook receives a **context object** with helpful utilities such as logging, path resolution, access to the active configuration, and information about the current mode (`dev`, `build`, or `preview`). Hooks can be synchronous or asynchronous, depending on what the plugin needs to do.
+
+
+## 🧰 Sharing Plugins
+
+If you’ve built a plugin that could benefit others, you can publish it as an npm package. Pyra looks for plugins following the `pyra-plugin-*` naming convention.
+
+Example: 
+
+```bash
+npm publish pyra-plugin-banner
+```
+Users can then install and register it:
+
+```bash
+npm install pyra-plugin-banner
+```
+
+```ts
+import banner from "pyra-plugin-banner";
+
+export default defineConfig({
+  plugins: [banner({ text: "Built with Pyra" })],
+});
+```
+Naming consistency helps others discover your plugin and ensures Pyra’s ecosystem remains clean and intuitive.
