@@ -11,6 +11,7 @@ import Cli from "../../docs/cli.mdx";
 import Monoerepo from "../../docs/monorepo.mdx";
 import DocsLayout from "../components/docs/DocsLayout";
 import DocsIndex from "../../docs/introduction.mdx";
+import TypeScript from "../../docs/typescript.mdx";
 import { Route, Routes } from "react-router";
 import Home from "@/components/home";
 
@@ -104,6 +105,14 @@ function DocRoutes() {
         element={
           <DocsLayout>
             <Monoerepo />
+          </DocsLayout>
+        }
+      />
+      <Route
+        path="/docs/ts"
+        element={
+          <DocsLayout>
+            <TypeScript />
           </DocsLayout>
         }
       />

@@ -1,0 +1,24 @@
+
+# ✨ TypeScript
+
+TypeScript is a first-class citizen in Pyra. You can start with **zero config**, then add stricter typing, path aliases, and multi-package setups as your project grows. This page covers how Pyra discovers TypeScript settings, how to wire up JSX and path aliases, how to type your environment variables, and how to ship libraries with `.d.ts` files.
+
+If your project has a `tsconfig.json`, Pyra reads relevant options (like JSX and path aliases) automatically. Use `.ts`/`.tsx` files anywhere in `src/` and run:
+
+```bash
+pyra dev
+pyra build
+```
+
+Type-checking is intentionally decoupled from bundling for speed. Keep a separate script for it:
+
+```json
+{
+  "scripts": {
+    "dev": "pyra dev",
+    "build": "pyra build",
+    "typecheck": "tsc --noEmit"
+  }
+}
+```
+This gives you instant HMR while preserving correctness in CI.

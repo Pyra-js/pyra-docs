@@ -9,7 +9,8 @@ import {
   Upload,
   HelpCircle,
   Keyboard,
-  Folder
+  Folder,
+  TypeIcon
 } from "lucide-react";
 
 export const SIDEBAR_ITEMS = [
@@ -44,6 +45,11 @@ export const SIDEBAR_ITEMS = [
         path: "/docs/monorepo",
         label: "Monorepos & Workspaces",
         icon: Folder,
+      },
+      {
+        path: "/docs/ts",
+        label: "TypeScript",
+        icon: TypeIcon,
       },
     ],
   },
