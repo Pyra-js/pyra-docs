@@ -1,234 +1,258 @@
 ---
 title: Quick Start
-description: Create your first Pyra.js project and start building in minutes.
+description: Build your first Pyra.js application in 5 minutes.
 sidebar_label: Quick Start
 slug: /docs/getting-started/quick-start
 ---
 
-import Terminal from '../components/Terminal';
-import GradientCode from '../components/GradientCode';
-import Callout from '../components/Callout';
-import Step from '../components/Step';
-
 # Quick Start
 
-<p className="text-xl text-gray-400 leading-relaxed">
-  Create and run your first Pyra.js project in under 60 seconds.
-</p>
+Let's build a simple counter app with Pyra and React. You'll learn the basics of Pyra's dev server, HMR, and build process.
 
-## Create a New Project
+## Create Your Project
 
-<Step number={1} title="Scaffold your project">
-  Use the `pyra create` command to scaffold a new project:
+<Terminal>
+npm create pyra@latest my-counter-app -- --template react-ts
+cd my-counter-app
+npm install
+</Terminal>
 
-<Terminal>pyra create my-app</Terminal>
+## Start the Dev Server
 
-You'll be prompted to choose a template:
+<Terminal>
+npm run dev
+</Terminal>
 
 ```
-? Select a template:
-  ❯ vanilla
-    vanilla-ts
-    react
-    react-ts
-    vue
-    vue-ts
-    svelte
-    svelte-ts
+  PYRA v1.0.0-beta.1  ready in 52 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h to show help
 ```
-
-</Step>
-
-<Step number={2} title="Navigate to your project">
-
-<Terminal>cd my-app</Terminal>
-
-</Step>
-
-<Step number={3} title="Install dependencies">
-
-<Terminal>npm install</Terminal>
-
-</Step>
-
-<Step number={4} title="Start the dev server">
-
-<Terminal>pyra dev</Terminal>
-
-Your app is now running at `http://localhost:3000` 🎉
-
-</Step>
 
 <Callout type="tip">
-  The dev server starts instantly thanks to native ESM. No bundling required during development!
+Notice how fast that was? Pyra starts instantly because it doesn't bundle during development.
 </Callout>
 
-## Project Structure
+## Build Your First Component
 
-Here's what Pyra.js generates:
+Open `src/App.tsx` and replace it with:
 
-<GradientCode language="plaintext" title="Project Structure">
-{`my-app/
-├── src/
-│   ├── main.ts          # Application entry point
-│   ├── App.tsx          # Root component
-│   ├── components/      # Your components
-│   └── assets/          # Static assets
-├── public/              # Public static files
-├── index.html           # HTML entry point
-├── pyra.config.ts       # Pyra configuration
-├── tsconfig.json        # TypeScript config
-└── package.json         # Project metadata`}
-</GradientCode>
-
-## Understanding the Entry Point
-
-Pyra.js uses `index.html` as the entry point:
-
-<GradientCode language="html" title="index.html">
-{`<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pyra App</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
-</html>`}
-</GradientCode>
-
-The `<script type="module">` tag tells the browser to load your TypeScript file as an ES module. Pyra handles the transformation automatically.
-
-## Your First Component
-
-Let's look at the default `App.tsx`:
-
-<GradientCode language="typescript" title="src/App.tsx">
-{`import { useState } from 'react';
+<GradientCode language="typescript">
+import { useState } from 'react';
 import './App.css';
 
 function App() {
   const [count, setCount] = useState(0);
 
   return (
-    <div className="App">
-      <h1>Welcome to Pyra.js</h1>
-      <button onClick={() => setCount(count + 1)}>
-        Count: {count}
-      </button>
+    <div className="app">
+      <h1>🔥 Pyra Counter</h1>
+      <div className="card">
+        <button onClick={() => setCount(count + 1)}>
+          Count is {count}
+        </button>
+        <p>Edit src/App.tsx and save to test HMR</p>
+      </div>
     </div>
   );
 }
 
-export default App;`}
+export default App;
 </GradientCode>
 
-Try editing this file—your changes will appear instantly thanks to Hot Module Replacement!
+## Experience Hot Module Replacement
 
-## Development Workflow
+With the dev server running, try editing the component:
 
-### Running the Dev Server
+<Step number={1}>
+Change the emoji in the `<h1>` tag from 🔥 to ⚡
+</Step>
 
-<Terminal>pyra dev</Terminal>
+<Step number={2}>
+Save the file
+</Step>
 
-Options:
-- `--port <number>` - Specify port (default: 3000)
-- `--host` - Expose to network
-- `--open` - Open browser automatically
-
-<Terminal>pyra dev --port 8080 --open</Terminal>
-
-### Building for Production
-
-<Terminal>pyra build</Terminal>
-
-This creates an optimized production build in the `dist/` directory.
-
-### Previewing the Build
-
-<Terminal>pyra preview</Terminal>
-
-Preview your production build locally before deploying.
+<Step number={3}>
+Watch your browser update **instantly** without losing the counter state
+</Step>
 
 <Callout type="note">
-  The preview server is for local testing only. Deploy the `dist/` folder to your hosting provider.
+This is Pyra's HMR in action. Only the changed component reloads, and React state is preserved.
 </Callout>
 
-## Hot Module Replacement
+## Add Some Styling
 
-Pyra's HMR preserves component state during updates:
+Create `src/App.css`:
 
-<GradientCode language="typescript" title="src/Counter.tsx">
-{`import { useState } from 'react';
+<GradientCode language="css">
+.app {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
 
-export function Counter() {
+h1 {
+  font-size: 3rem;
+  background: linear-gradient(135deg, #FFB347, #FF5C38, #9333EA);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 2rem;
+}
+
+.card {
+  padding: 2rem;
+  background: #1a1a1a;
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+button {
+  background: linear-gradient(135deg, #FFB347, #FF5C38);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(255, 92, 56, 0.4);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+p {
+  margin-top: 1rem;
+  color: #888;
+  font-size: 0.875rem;
+}
+</GradientCode>
+
+Save and watch the styles update instantly. 🔥
+
+## Import Assets
+
+Pyra handles static assets automatically. Create `src/assets/logo.svg` or use an existing image:
+
+<GradientCode language="typescript">
+import { useState } from 'react';
+import logo from './assets/logo.svg';
+import './App.css';
+
+function App() {
   const [count, setCount] = useState(0);
-  
+
   return (
-    <button onClick={() => setCount(count + 1)}>
-      Count: {count}
-    </button>
+    <div className="app">
+      <img src={logo} alt="Logo" width="100" />
+      <h1>🔥 Pyra Counter</h1>
+      {/* ... rest of component */}
+    </div>
   );
 }
 
-// HMR API (optional, for advanced use cases)
-if (import.meta.hot) {
-  import.meta.hot.accept();
-}`}
+export default App;
 </GradientCode>
 
-## Environment Variables
+<Callout type="tip">
+Pyra automatically optimizes images, handles SVGs, and generates proper URLs for all your assets.
+</Callout>
+
+## Use Environment Variables
 
 Create a `.env` file in your project root:
 
-<GradientCode language="bash" title=".env">
-{`PYRA_API_URL=https://api.example.com
-PYRA_FEATURE_FLAG=true`}
-</GradientCode>
+```
+PYRA_APP_TITLE=My Awesome Counter
+PYRA_API_URL=https://api.example.com
+```
 
 Access them in your code:
 
 <GradientCode language="typescript">
-{`const apiUrl = import.meta.env.PYRA_API_URL;
-const featureEnabled = import.meta.env.PYRA_FEATURE_FLAG === 'true';`}
+function App() {
+  const appTitle = import.meta.env.PYRA_APP_TITLE;
+  
+  return (
+    <div className="app">
+      <h1>{appTitle}</h1>
+      {/* ... */}
+    </div>
+  );
+}
 </GradientCode>
 
 <Callout type="warn">
-  Only variables prefixed with `PYRA_` are exposed to your client code. This prevents accidentally leaking secrets.
+Only variables prefixed with `PYRA_` are exposed to your client code. This prevents accidentally leaking secrets.
 </Callout>
 
-## Adding Dependencies
+## Build for Production
 
-Install packages as usual:
+When you're ready to deploy:
 
-<Terminal>npm install lodash</Terminal>
+<Terminal>
+npm run build
+</Terminal>
 
-Pyra automatically detects and pre-bundles dependencies for optimal performance.
+```
+pyra v1.0.0-beta.1 building for production...
+✓ 34 modules transformed.
+dist/index.html                   0.45 kB
+dist/assets/index-a3b4c5d6.css    1.23 kB │ gzip: 0.61 kB
+dist/assets/index-d4e5f6a7.js    143.21 kB │ gzip: 46.13 kB
 
-## TypeScript Support
+✓ built in 1.24s
+```
 
-TypeScript works out of the box. No configuration needed!
+Your optimized app is now in the `dist/` folder, ready to deploy.
 
-<GradientCode language="typescript" title="src/utils.ts">
-{`export function greet(name: string): string {
-  return \`Hello, \${name}!\`;
-}
+## Preview the Build
 
-// Full IntelliSense and type checking
-const message = greet('Pyra'); // ✅ Type-safe`}
-</GradientCode>
+Test your production build locally:
+
+<Terminal>
+npm run preview
+</Terminal>
+
+```
+  PYRA v1.0.0-beta.1  preview server running at:
+
+  ➜  Local:   http://localhost:4173/
+  ➜  Network: use --host to expose
+```
+
+<Callout type="note">
+The preview server serves your production build exactly as it will appear when deployed.
+</Callout>
+
+## What You've Learned
+
+In just 5 minutes, you've:
+
+- ✅ Created a Pyra project
+- ✅ Experienced instant dev server starts
+- ✅ Used Hot Module Replacement
+- ✅ Imported assets and styles
+- ✅ Used environment variables
+- ✅ Built for production
 
 ## Next Steps
 
-You're now ready to build with Pyra.js! Here's what to explore next:
+Now that you understand the basics:
 
-- [Project Structure](/docs/getting-started/project-structure) - Understand the generated files
-- [Configuration](/docs/configuration/overview) - Customize Pyra for your needs
-- [Plugins](/docs/plugins/overview) - Extend Pyra with plugins
+- **[Project Structure](/docs/getting-started/project-structure)** — Learn how Pyra projects are organized
+- **[Configuration](/docs/configuration/overview)** — Customize Pyra for your needs
+- **[CLI Commands](/docs/cli/overview)** — Master the Pyra CLI
 
-<Callout type="tip">
-  Join our [Discord community](https://discord.gg/pyra) to get help, share projects, and connect with other Pyra developers!
-</Callout>
+---
+
+Keep building. Stay in flow. 🔥

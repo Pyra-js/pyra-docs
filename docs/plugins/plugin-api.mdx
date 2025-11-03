@@ -1,408 +1,478 @@
 ---
 title: Plugin API
-description: Learn the Pyra.js plugin API and available hooks.
+description: Learn how to create powerful Pyra plugins using the plugin API.
 sidebar_label: Plugin API
 slug: /docs/plugins/plugin-api
 ---
 
-import GradientCode from '../components/GradientCode';
-import Callout from '../components/Callout';
-
 # Plugin API
 
-<p className="text-xl text-gray-400 leading-relaxed">
-  Understand the plugin container and available lifecycle hooks.
-</p>
+Pyra's plugin system is built on Rollup's plugin interface with additional hooks for dev server and HMR functionality.
 
-## Plugin Interface
+## Creating a Plugin
 
-A Pyra plugin is an object with a `name` and optional hooks:
+A Pyra plugin is an object with a `name` property and one or more hooks:
 
 <GradientCode language="typescript">
-{`interface Plugin {
-  name: string;
-  enforce?: 'pre' | 'post';
-  apply?: 'serve' | 'build' | ((config: UserConfig, env: ConfigEnv) => boolean);
-  config?: (config: UserConfig, env: ConfigEnv) => UserConfig | null | void;
-  configResolved?: (config: ResolvedConfig) => void | Promise<void>;
-  configureServer?: (server: PyraDevServer) => void | Promise<void>;
-  transformIndexHtml?: (html: string) => string | Promise<string>;
-  resolveId?: (source: string, importer?: string) => string | null | Promise<string | null>;
-  load?: (id: string) => string | null | Promise<string | null>;
-  transform?: (code: string, id: string) => TransformResult | Promise<TransformResult>;
-  buildStart?: () => void | Promise<void>;
-  buildEnd?: () => void | Promise<void>;
-  closeBundle?: () => void | Promise<void>;
-}`}
-</GradientCode>
+import type { PyraPlugin } from 'pyra';
 
-## Core Hooks
-
-### config
-
-Modify Pyra config before it's resolved:
-
-<GradientCode language="typescript">
-{`export function myPlugin(): Plugin {
+export default function myPlugin(): PyraPlugin {
   return {
     name: 'my-plugin',
-    config(config, { command, mode }) {
-      if (command === 'build') {
+    
+    // Plugin hooks go here
+    transform(code, id) {
+      if (id.endsWith('.custom')) {
         return {
-          build: {
-            minify: true
-          }
+          code: transformCode(code),
+          map: null,
         };
-      }
-    }
-  };
-}`}
-</GradientCode>
-
-### configResolved
-
-Called after config is resolved:
-
-<GradientCode language="typescript">
-{`export function myPlugin(): Plugin {
-  let config: ResolvedConfig;
-  
-  return {
-    name: 'my-plugin',
-    configResolved(resolvedConfig) {
-      config = resolvedConfig;
-      console.log('Final config:', config);
-    }
-  };
-}`}
-</GradientCode>
-
-### configureServer
-
-Add custom middleware to dev server:
-
-<GradientCode language="typescript">
-{`export function myPlugin(): Plugin {
-  return {
-    name: 'my-plugin',
-    configureServer(server) {
-      server.middlewares.use((req, res, next) => {
-        if (req.url === '/custom') {
-          res.end('Custom response');
-        } else {
-          next();
-        }
-      });
-    }
-  };
-}`}
-</GradientCode>
-
-## Transform Hooks
-
-### resolveId
-
-Resolve module imports:
-
-<GradientCode language="typescript">
-{`export function virtualModulePlugin(): Plugin {
-  const virtualModuleId = 'virtual:my-module';
-  
-  return {
-    name: 'virtual-module',
-    resolveId(id) {
-      if (id === virtualModuleId) {
-        return virtualModuleId;
       }
     },
-    load(id) {
-      if (id === virtualModuleId) {
-        return 'export default "This is virtual!"';
-      }
-    }
   };
-}`}
+}
 </GradientCode>
 
-### load
+## Universal Hooks
 
-Load module content:
+These hooks work in both dev and build modes.
+
+### `config`
+
+Modify Pyra config before it's resolved. Return partial config to merge.
 
 <GradientCode language="typescript">
-{`export function customLoaderPlugin(): Plugin {
-  return {
-    name: 'custom-loader',
-    load(id) {
-      if (id.endsWith('.custom')) {
-        const content = fs.readFileSync(id, 'utf-8');
-        return \`export default \${JSON.stringify(content)}\`;
-      }
-    }
-  };
-}`}
+config(config, env) {
+  if (env.command === 'serve') {
+    return {
+      server: {
+        port: 3000,
+      },
+    };
+  }
+}
 </GradientCode>
 
-### transform
+**Parameters:**
+- `config`: Current user config
+- `env`: `{ command: 'serve' | 'build', mode: string }`
 
-Transform module code:
+**Returns:** Partial config or `null`
+
+### `configResolved`
+
+Called after config is resolved. Use this to read the final config.
 
 <GradientCode language="typescript">
-{`export function transformPlugin(): Plugin {
-  return {
-    name: 'transform-plugin',
-    transform(code, id) {
-      if (id.endsWith('.js')) {
-        // Transform the code
-        const transformed = code.replace(/OLD/g, 'NEW');
-        
-        return {
-          code: transformed,
-          map: null // or generate source map
-        };
-      }
-    }
-  };
-}`}
+configResolved(resolvedConfig) {
+  console.log('Final config:', resolvedConfig);
+}
 </GradientCode>
+
+<Callout type="note">
+This hook is called after all `config` hooks have run and the config is finalized.
+</Callout>
+
+### `resolveId`
+
+Custom module resolution. Return a module ID to resolve it.
+
+<GradientCode language="typescript">
+resolveId(source, importer) {
+  if (source === 'virtual-module') {
+    return '\0virtual-module';
+  }
+}
+</GradientCode>
+
+**Parameters:**
+- `source`: The module being imported
+- `importer`: The file doing the importing
+
+**Returns:** Resolved ID or `null`
+
+<Callout type="tip">
+Prefix virtual module IDs with `\0` to prevent other plugins from processing them.
+</Callout>
+
+### `load`
+
+Load module content. Return code for the module.
+
+<GradientCode language="typescript">
+load(id) {
+  if (id === '\0virtual-module') {
+    return 'export default "Hello from virtual module"';
+  }
+}
+</GradientCode>
+
+**Parameters:**
+- `id`: The module ID to load
+
+**Returns:** Module code or `null`
+
+### `transform`
+
+Transform module code. This is where most processing happens.
+
+<GradientCode language="typescript">
+transform(code, id) {
+  if (id.endsWith('.md')) {
+    return {
+      code: `export default ${JSON.stringify(markdownToHtml(code))}`,
+      map: null,
+    };
+  }
+}
+</GradientCode>
+
+**Parameters:**
+- `code`: Module source code
+- `id`: Module ID
+
+**Returns:** `{ code: string, map?: SourceMap | null }`
+
+## Dev Server Hooks
+
+These hooks only run during development.
+
+### `configureServer`
+
+Configure the dev server. Add middleware, set up WebSocket handlers, etc.
+
+<GradientCode language="typescript">
+configureServer(server) {
+  server.middlewares.use((req, res, next) => {
+    if (req.url === '/api/health') {
+      res.end('OK');
+    } else {
+      next();
+    }
+  });
+}
+</GradientCode>
+
+**Parameters:**
+- `server`: Pyra dev server instance
+
+**Returns:** Post-middleware hook function (optional)
+
+### `transformIndexHtml`
+
+Transform `index.html`. Inject tags, modify content, etc.
+
+<GradientCode language="typescript">
+transformIndexHtml(html) {
+  return html.replace(
+    '</head>',
+    '<script src="/analytics.js"></script></head>'
+  );
+}
+</GradientCode>
+
+Or return tag descriptors:
+
+<GradientCode language="typescript">
+transformIndexHtml() {
+  return [
+    {
+      tag: 'script',
+      attrs: { src: '/analytics.js' },
+      injectTo: 'head',
+    },
+  ];
+}
+</GradientCode>
+
+### `handleHotUpdate`
+
+Custom HMR handling. Control which modules reload.
+
+<GradientCode language="typescript">
+handleHotUpdate({ file, server }) {
+  if (file.endsWith('.custom')) {
+    console.log('Custom file changed:', file);
+    
+    // Trigger full reload
+    server.ws.send({
+      type: 'full-reload',
+      path: '*',
+    });
+    
+    // Return empty array to prevent default HMR
+    return [];
+  }
+}
+</GradientCode>
+
+**Parameters:**
+- `file`: Changed file path
+- `server`: Dev server instance
+- `modules`: Affected modules
+- `timestamp`: Update timestamp
+
+**Returns:** Array of modules to update, or `void`
 
 ## Build Hooks
 
-### buildStart
+These hooks only run during production builds.
 
-Called when build starts:
+### `buildStart`
+
+Called when build starts.
 
 <GradientCode language="typescript">
-{`export function buildPlugin(): Plugin {
-  return {
-    name: 'build-plugin',
-    buildStart() {
-      console.log('Build starting...');
-    }
-  };
-}`}
+buildStart(options) {
+  console.log('Build starting with options:', options);
+}
 </GradientCode>
 
-### buildEnd
+### `buildEnd`
 
-Called when build ends:
+Called when build ends (success or failure).
 
 <GradientCode language="typescript">
-{`export function buildPlugin(): Plugin {
-  return {
-    name: 'build-plugin',
-    buildEnd() {
-      console.log('Build complete!');
-    }
-  };
-}`}
+buildEnd(error) {
+  if (error) {
+    console.error('Build failed:', error);
+  } else {
+    console.log('Build succeeded!');
+  }
+}
 </GradientCode>
 
-### generateBundle
+### `generateBundle`
 
-Modify output before writing:
-
-<GradientCode language="typescript">
-{`export function bundlePlugin(): Plugin {
-  return {
-    name: 'bundle-plugin',
-    generateBundle(options, bundle) {
-      // Add a custom file to output
-      this.emitFile({
-        type: 'asset',
-        fileName: 'custom.txt',
-        source: 'Custom content'
-      });
-    }
-  };
-}`}
-</GradientCode>
-
-## HTML Transform
-
-### transformIndexHtml
-
-Transform the HTML entry point:
+Called when bundle is generated. Modify output files.
 
 <GradientCode language="typescript">
-{`export function htmlPlugin(): Plugin {
-  return {
-    name: 'html-plugin',
-    transformIndexHtml(html) {
-      return html.replace(
-        '</head>',
-        '<script>console.log("Injected!")</script></head>'
-      );
-    }
-  };
-}`}
+generateBundle(options, bundle) {
+  // Add a custom file to the bundle
+  this.emitFile({
+    type: 'asset',
+    fileName: 'custom.txt',
+    source: 'Custom content',
+  });
+}
 </GradientCode>
 
 ## Plugin Ordering
 
-### enforce
-
-Control when plugin runs:
+Control when your plugin runs with the `enforce` option:
 
 <GradientCode language="typescript">
-{`export function prePlugin(): Plugin {
+export default function myPlugin(): PyraPlugin {
   return {
-    name: 'pre-plugin',
-    enforce: 'pre', // Run before core plugins
-    transform(code, id) {
-      // Runs first
-    }
+    name: 'my-plugin',
+    enforce: 'pre', // 'pre' | 'post' | undefined
+    
+    // ... hooks
   };
 }
-
-export function postPlugin(): Plugin {
-  return {
-    name: 'post-plugin',
-    enforce: 'post', // Run after core plugins
-    transform(code, id) {
-      // Runs last
-    }
-  };
-}`}
 </GradientCode>
 
-### apply
+- **`pre`**: Run before Pyra core plugins
+- **`post`**: Run after Pyra core plugins
+- **`undefined`**: Run in normal order
 
-Conditionally apply plugin:
+## Conditional Application
+
+Apply plugins only in certain modes:
 
 <GradientCode language="typescript">
-{`export function devOnlyPlugin(): Plugin {
+export default function myPlugin(): PyraPlugin {
   return {
-    name: 'dev-only',
-    apply: 'serve', // Only in dev mode
-    configureServer(server) {
-      // Dev-only logic
-    }
+    name: 'my-plugin',
+    apply: 'build', // 'serve' | 'build' | function
+    
+    // ... hooks
   };
 }
+</GradientCode>
 
-export function buildOnlyPlugin(): Plugin {
+Or use a function:
+
+<GradientCode language="typescript">
+apply(config, { command }) {
+  return command === 'build' && config.build.ssr;
+}
+</GradientCode>
+
+## Complete Example
+
+Here's a complete plugin that transforms `.env` files:
+
+<GradientCode language="typescript">
+import type { PyraPlugin } from 'pyra';
+import fs from 'fs';
+import path from 'path';
+
+export default function envPlugin(): PyraPlugin {
+  let config: any;
+  
   return {
-    name: 'build-only',
-    apply: 'build', // Only in build mode
-    buildStart() {
-      // Build-only logic
-    }
+    name: 'pyra-plugin-env',
+    enforce: 'pre',
+    
+    configResolved(resolvedConfig) {
+      config = resolvedConfig;
+    },
+    
+    resolveId(source) {
+      if (source === 'virtual:env') {
+        return '\0virtual:env';
+      }
+    },
+    
+    load(id) {
+      if (id === '\0virtual:env') {
+        const envPath = path.resolve(config.root, '.env');
+        
+        if (!fs.existsSync(envPath)) {
+          return 'export default {}';
+        }
+        
+        const envContent = fs.readFileSync(envPath, 'utf-8');
+        const env = {};
+        
+        envContent.split('\n').forEach(line => {
+          const [key, value] = line.split('=');
+          if (key && value) {
+            env[key.trim()] = value.trim();
+          }
+        });
+        
+        return `export default ${JSON.stringify(env)}`;
+      }
+    },
+    
+    handleHotUpdate({ file, server }) {
+      if (file.endsWith('.env')) {
+        // Reload when .env changes
+        server.ws.send({
+          type: 'full-reload',
+          path: '*',
+        });
+      }
+    },
   };
-}`}
+}
+</GradientCode>
+
+Usage:
+
+<GradientCode language="typescript">
+// pyra.config.ts
+import { defineConfig } from 'pyra';
+import envPlugin from './plugins/env-plugin';
+
+export default defineConfig({
+  plugins: [envPlugin()],
+});
+</GradientCode>
+
+<GradientCode language="typescript">
+// In your app
+import env from 'virtual:env';
+
+console.log(env.API_KEY);
 </GradientCode>
 
 ## Plugin Context
 
-Access plugin context in hooks:
+Inside hooks, `this` provides useful methods:
+
+### `this.emitFile()`
+
+Emit a file to the output directory.
 
 <GradientCode language="typescript">
-{`export function contextPlugin(): Plugin {
-  return {
-    name: 'context-plugin',
-    transform(code, id) {
-      // Emit a file
-      this.emitFile({
-        type: 'asset',
-        fileName: 'generated.json',
-        source: JSON.stringify({ id })
-      });
-      
-      // Add watch file
-      this.addWatchFile('/path/to/file');
-      
-      // Get module info
-      const info = this.getModuleInfo(id);
-      
-      return code;
-    }
-  };
-}`}
+this.emitFile({
+  type: 'asset',
+  fileName: 'custom.json',
+  source: JSON.stringify(data),
+});
 </GradientCode>
 
-<Callout type="note">
-  The plugin context (`this`) provides utilities for emitting files, watching files, and accessing module information.
-</Callout>
+### `this.error()`
 
-## Complete Example
+Throw a build error.
 
 <GradientCode language="typescript">
-{`import { Plugin } from 'pyra';
-import fs from 'fs';
-
-export interface MyPluginOptions {
-  include?: string[];
-  exclude?: string[];
+if (!isValid) {
+  this.error('Invalid configuration');
 }
+</GradientCode>
 
-export function myPlugin(options: MyPluginOptions = {}): Plugin {
+### `this.warn()`
+
+Emit a warning.
+
+<GradientCode language="typescript">
+this.warn('Deprecated API used');
+</GradientCode>
+
+## TypeScript Support
+
+Get full type safety for your plugins:
+
+<GradientCode language="typescript">
+import type { PyraPlugin, ResolvedConfig } from 'pyra';
+
+export default function myPlugin(): PyraPlugin {
   let config: ResolvedConfig;
   
   return {
     name: 'my-plugin',
     
-    // Modify config
-    config(userConfig) {
-      return {
-        define: {
-          __PLUGIN_ENABLED__: true
-        }
-      };
-    },
-    
-    // Store resolved config
     configResolved(resolvedConfig) {
       config = resolvedConfig;
     },
     
-    // Add dev server middleware
-    configureServer(server) {
-      server.middlewares.use((req, res, next) => {
-        if (req.url === '/plugin-status') {
-          res.end(JSON.stringify({ status: 'active' }));
-        } else {
-          next();
-        }
-      });
+    transform(code: string, id: string) {
+      // TypeScript knows the types!
+      return {
+        code: code.toUpperCase(),
+        map: null,
+      };
     },
-    
-    // Resolve virtual modules
-    resolveId(id) {
-      if (id === 'virtual:config') {
-        return id;
-      }
-    },
-    
-    // Load virtual modules
-    load(id) {
-      if (id === 'virtual:config') {
-        return \`export default \${JSON.stringify(config)}\`;
-      }
-    },
-    
-    // Transform code
-    transform(code, id) {
-      if (id.endsWith('.custom')) {
-        return {
-          code: \`export default \${JSON.stringify(code)}\`,
-          map: null
-        };
-      }
-    },
-    
-    // Build lifecycle
-    buildStart() {
-      console.log('Build started');
-    },
-    
-    buildEnd() {
-      console.log('Build ended');
-    }
   };
-}`}
+}
 </GradientCode>
+
+## Best Practices
+
+<Step number={1}>
+**Use descriptive names** — Prefix with `pyra-plugin-` for npm packages
+</Step>
+
+<Step number={2}>
+**Handle errors gracefully** — Use `this.error()` and `this.warn()`
+</Step>
+
+<Step number={3}>
+**Cache expensive operations** — Store results in `configResolved`
+</Step>
+
+<Step number={4}>
+**Document your plugin** — Include usage examples and TypeScript types
+</Step>
+
+<Step number={5}>
+**Test in both modes** — Ensure your plugin works in dev and build
+</Step>
+
+<Callout type="warn">
+Avoid heavy synchronous operations in `transform` hooks. They run on every file and can slow down builds.
+</Callout>
 
 ## Next Steps
 
-- [Creating Plugins](/docs/plugins/creating-plugins) - Build your own plugin
-- [Official Plugins](/docs/plugins/official-plugins) - Explore official plugins
-- [Plugin Types](/docs/api/plugin-types) - TypeScript types
+- **[Creating Plugins](/docs/plugins/creating-plugins)** — Step-by-step plugin development guide
+- **[Official Plugins](/docs/plugins/official-plugins)** — Explore Pyra's official plugins
+- **[Plugin Types](/docs/api/plugin-types)** — Full TypeScript API reference
+
+---
+
+Build powerful plugins. Extend Pyra. 🔥

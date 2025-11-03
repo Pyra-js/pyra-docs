@@ -1,62 +1,122 @@
 ---
 title: Installation
-description: Install Pyra.js and set up your development environment.
+description: Install Pyra.js and create your first project in under a minute.
 sidebar_label: Installation
 slug: /docs/getting-started/installation
 ---
 
-import Terminal from '../components/Terminal';
-import Callout from '../components/Callout';
-import Step from '../components/Step';
-
 # Installation
 
-<p className="text-xl text-gray-400 leading-relaxed">
-  Get started with Pyra.js in minutes. Install globally or use it directly with npx.
-</p>
+Get started with Pyra in under a minute. Choose your package manager and let's go.
 
-## Prerequisites
+## Quick Start
 
-Before installing Pyra.js, ensure you have:
+<Step number={1}>
 
-- **Node.js** version 16.0 or higher
-- **npm**, **pnpm**, or **yarn** package manager
+### Create a New Project
+
+Use the official scaffolding tool to create a new Pyra project:
+
+<Terminal>
+npm create pyra@latest my-pyra-app
+</Terminal>
+
+Or with your preferred package manager:
+
+<Terminal>
+pnpm create pyra my-pyra-app
+</Terminal>
+
+<Terminal>
+yarn create pyra my-pyra-app
+</Terminal>
+
+</Step>
+
+<Step number={2}>
+
+### Choose a Template
+
+The CLI will prompt you to select a template:
+
+```
+? Select a framework: › 
+❯ React
+  Vue
+  Svelte
+  Vanilla
+
+? Select a variant: ›
+❯ TypeScript
+  JavaScript
+```
 
 <Callout type="tip">
-  We recommend using the latest LTS version of Node.js for the best experience.
+We recommend starting with **React + TypeScript** for the best developer experience.
 </Callout>
 
-## Global Installation
+</Step>
 
-Install Pyra.js globally to use it across all your projects:
+<Step number={3}>
 
-<Terminal>npm install -g pyra</Terminal>
+### Install Dependencies
 
-<Terminal>pnpm add -g pyra</Terminal>
+Navigate to your project and install dependencies:
 
-<Terminal>yarn global add pyra</Terminal>
+<Terminal>
+cd my-pyra-app
+npm install
+</Terminal>
 
-After installation, verify it's working:
+</Step>
 
-<Terminal>pyra --version</Terminal>
+<Step number={4}>
 
-## Using npx (No Installation)
+### Start the Dev Server
 
-You can use Pyra.js without installing it globally:
+<Terminal>
+npm run dev
+</Terminal>
 
-<Terminal>npx pyra create my-app</Terminal>
+Your app is now running at `http://localhost:5173` 🔥
 
-This is perfect for trying Pyra.js or creating one-off projects.
+</Step>
 
-## Project-Specific Installation
+## Manual Installation
 
-For project-specific installations, add Pyra.js as a dev dependency:
+If you prefer to set up Pyra manually in an existing project:
 
-<Terminal>npm install -D pyra</Terminal>
+<Step number={1}>
 
-Then add scripts to your `package.json`:
+### Install Pyra
 
-```json
+<Terminal>
+npm install -D pyra
+</Terminal>
+
+</Step>
+
+<Step number={2}>
+
+### Create Project Structure
+
+```
+my-project/
+├── index.html
+├── src/
+│   ├── main.ts
+│   └── app.ts
+├── package.json
+└── tsconfig.json
+```
+
+</Step>
+
+<Step number={3}>
+
+### Add Scripts to package.json
+
+<GradientCode language="json">
 {
   "scripts": {
     "dev": "pyra dev",
@@ -64,82 +124,123 @@ Then add scripts to your `package.json`:
     "preview": "pyra preview"
   }
 }
-```
+</GradientCode>
+
+</Step>
+
+<Step number={4}>
+
+### Create index.html
+
+<GradientCode language="html">
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pyra App</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
+</GradientCode>
 
 <Callout type="note">
-  Project-specific installation is recommended for team projects to ensure everyone uses the same Pyra version.
+The `type="module"` attribute is required. Pyra serves your source files as native ES modules.
 </Callout>
+
+</Step>
+
+<Step number={5}>
+
+### Create src/main.ts
+
+<GradientCode language="typescript">
+import { createApp } from './app';
+
+const app = createApp();
+app.mount('#app');
+
+console.log('🔥 Pyra app ignited!');
+</GradientCode>
+
+</Step>
+
+<Step number={6}>
+
+### Start Development
+
+<Terminal>
+npm run dev
+</Terminal>
+
+</Step>
 
 ## System Requirements
 
-### Minimum Requirements
+Pyra requires:
 
-- **Node.js**: 16.0+
-- **RAM**: 512 MB available
-- **Disk Space**: 100 MB for Pyra + dependencies
-
-### Recommended
-
-- **Node.js**: 18.0+ (LTS)
-- **RAM**: 2 GB available
-- **Disk Space**: 500 MB for optimal caching
-
-## Troubleshooting
-
-### Permission Errors (macOS/Linux)
-
-If you encounter permission errors during global installation:
-
-<Terminal>sudo npm install -g pyra</Terminal>
-
-Or configure npm to use a different directory:
-
-<Terminal>npm config set prefix ~/.npm-global</Terminal>
-
-Then add to your PATH:
-
-```bash
-export PATH=~/.npm-global/bin:$PATH
-```
-
-### Windows Long Path Issues
-
-Enable long paths in Windows if you encounter path length errors:
-
-<Terminal>git config --system core.longpaths true</Terminal>
-
-### Network Issues
-
-If installation fails due to network issues, try:
-
-1. Use a different registry:
-
-<Terminal>npm install -g pyra --registry=https://registry.npmmirror.com</Terminal>
-
-2. Increase timeout:
-
-<Terminal>npm install -g pyra --fetch-timeout=60000</Terminal>
+- **Node.js** version 18.0 or higher
+- **npm** 7+, **pnpm** 7+, or **yarn** 1.22+
 
 <Callout type="warn">
-  If you're behind a corporate proxy, you may need to configure npm proxy settings. See the [npm documentation](https://docs.npmjs.com/cli/v8/using-npm/config#proxy) for details.
+Pyra uses native ES modules and modern JavaScript features. Node.js 16 and below are not supported.
 </Callout>
 
-## Updating Pyra.js
+## TypeScript Configuration
 
-Keep Pyra.js up to date to get the latest features and bug fixes:
+Pyra works with TypeScript out of the box. Here's a recommended `tsconfig.json`:
 
-<Terminal>npm update -g pyra</Terminal>
+<GradientCode language="json">
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src"]
+}
+</GradientCode>
 
-Check for available updates:
+<Callout type="tip">
+Pyra automatically reads your `tsconfig.json` and respects your path aliases. No additional configuration needed!
+</Callout>
 
-<Terminal>npm outdated -g pyra</Terminal>
+## Verify Installation
 
-## Uninstalling
+Check that Pyra is installed correctly:
 
-To remove Pyra.js:
+<Terminal>
+npx pyra --version
+</Terminal>
 
-<Terminal>npm uninstall -g pyra</Terminal>
+You should see output like:
+
+```
+pyra/1.0.0-beta.1
+```
 
 ## Next Steps
 
-Now that Pyra.js is installed, you're ready to create your first project! Continue to the [Quick Start Guide](/docs/getting-started/quick-start).
+Now that Pyra is installed:
+
+- **[Quick Start](/docs/getting-started/quick-start)** — Build your first app
+- **[Project Structure](/docs/getting-started/project-structure)** — Understand the file layout
+- **[Configuration](/docs/configuration/overview)** — Customize Pyra for your needs
+
+---
+
+Ready to build? Let's ignite your project. 🔥

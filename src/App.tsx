@@ -5,14 +5,11 @@ import DocsPage from "./components/docs/DocsPage";
 
 function App() {
   return (
-    <Suspense fallback={<p>Loading...</p>}>
-      <>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/docs" element={<DocsPage />} />
-        </Routes>
-      </>
-    </Suspense>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/docs" element={<DocsPage />} />
+      <Route path="/docs/*" element={<DocsPage />} />
+    </Routes>
   );
 }
 

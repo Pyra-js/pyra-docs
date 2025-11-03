@@ -1,81 +1,95 @@
 ---
 title: Overview
-description: Learn what Pyra.js is and how it can transform your frontend development workflow.
+description: Meet Pyra.js — a blazing-fast, TypeScript-first build tool that ignites your frontend development.
 sidebar_label: Overview
 slug: /docs/introduction/overview
 ---
 
-import Callout from '../components/Callout';
-import Badge from '../components/Badge';
-
 # Overview
 
-<p className="text-xl text-gray-400 leading-relaxed">
-  Pyra.js is a blazing-fast, TypeScript-first build tool designed to ignite your frontend development workflow.
-</p>
+**Pyra.js** is a next-generation build tool designed for modern web development. Built from the ground up with TypeScript and performance in mind, Pyra delivers instant server starts, lightning-fast HMR, and optimized production builds.
 
-## What is Pyra.js?
+## What is Pyra?
 
-Pyra.js is a next-generation build tool that combines the speed of native tooling with the flexibility of a plugin ecosystem. Built from the ground up for modern web development, Pyra delivers:
+Pyra is a build tool that combines the best ideas from Vite, esbuild, and Rollup into a unified, opinionated developer experience. It's designed to:
 
-- **⚡ Lightning-fast builds** - Native-speed bundling with optimized hot module replacement
-- **🎯 TypeScript-first** - Full type safety and IntelliSense out of the box
-- **🔌 Extensible** - Powerful plugin API for custom transformations
-- **📦 Zero-config** - Intelligent defaults that just work
-- **🚀 Production-ready** - Optimized builds with code splitting and tree-shaking
+- **Start instantly** — No bundling during development
+- **Update instantly** — HMR that stays fast as your app grows
+- **Build optimally** — Production builds optimized with Rollup
+- **Stay simple** — Minimal configuration, maximum productivity
 
 <Callout type="tip">
-  Pyra.js is designed for developers who want to focus on building, not configuring. Start coding in seconds with zero setup.
+Pyra is perfect for React, Vue, Svelte, and vanilla TypeScript projects. If you're building a modern web app, Pyra has you covered.
 </Callout>
-
-## What Pyra.js Is
-
-✅ **A modern build tool** - Pyra replaces traditional bundlers with a faster, more efficient solution  
-✅ **TypeScript-native** - First-class TypeScript support without additional configuration  
-✅ **Framework-agnostic** - Works with React, Vue, Svelte, or vanilla JavaScript  
-✅ **Developer-focused** - Instant HMR, clear error messages, and excellent DX  
-✅ **Production-optimized** - Automatic code splitting, tree-shaking, and minification
-
-## What Pyra.js Isn't
-
-❌ **Not a framework** - Pyra is a build tool, not an application framework  
-❌ **Not a replacement for package managers** - Use npm, pnpm, or yarn alongside Pyra  
-❌ **Not limited to specific frameworks** - Works with any frontend library or framework  
-❌ **Not overly opinionated** - Flexible configuration when you need it
 
 ## Key Features
 
-### Instant Hot Module Replacement
+### ⚡ Lightning Fast
 
-Pyra's HMR is powered by native ESM, delivering updates in milliseconds without full page reloads.
+Pyra uses native ES modules during development, meaning no bundling is required. Your dev server starts in milliseconds, not seconds.
 
-### Optimized Dependency Pre-bundling
+```typescript
+// Server starts instantly, even with 1000+ modules
+import { createServer } from 'pyra';
 
-Dependencies are automatically discovered and pre-bundled using esbuild, reducing server startup time and improving performance.
+const server = await createServer();
+await server.listen();
+// Ready in ~50ms
+```
 
-### Smart Code Splitting
+### 🔥 Hot Module Replacement
 
-Automatic code splitting ensures optimal bundle sizes and faster page loads.
+HMR that actually works. Pyra's HMR implementation is precise, fast, and reliable — even in large applications.
 
-### Rich Plugin Ecosystem
+### 📦 Optimized Builds
 
-Extend Pyra with official and community plugins for React, Vue, Svelte, and more.
+Production builds use Rollup under the hood, with automatic code splitting, tree-shaking, and asset optimization.
+
+### 🎯 TypeScript First
+
+Full TypeScript support out of the box. No configuration needed. Pyra understands your `tsconfig.json` and respects your path aliases.
+
+### 🔌 Plugin Ecosystem
+
+Extend Pyra with a powerful plugin API compatible with Rollup plugins. Create custom transformations, add framework support, or integrate with your favorite tools.
+
+## What Pyra Is Not
+
+Pyra is **not**:
+
+- A framework (it's a build tool)
+- A replacement for your bundler in all scenarios (use Webpack for complex legacy apps)
+- Production-ready for server-side rendering (SSR support is experimental)
 
 <Callout type="note">
-  Pyra.js is currently in <Badge variant="mvp">MVP</Badge> stage. We're actively developing new features and welcome community feedback.
+Pyra is currently in **MVP** stage. APIs may change before v1.0. Use in production at your own risk.
 </Callout>
 
 ## Browser Support
 
-Pyra.js targets modern browsers with native ES modules support:
+Pyra targets modern browsers with native ES module support:
 
 - Chrome ≥ 87
 - Firefox ≥ 78
 - Safari ≥ 14
 - Edge ≥ 88
 
-For legacy browser support, Pyra can generate polyfilled builds during production.
+For legacy browser support, use the `@pyra/plugin-legacy` plugin.
 
 ## Next Steps
 
-Ready to get started? Check out the [Installation Guide](/docs/getting-started/installation) to create your first Pyra project.
+<Step number={1}>
+**Install Pyra** — Get started in under a minute with `npm create pyra@latest`
+</Step>
+
+<Step number={2}>
+**Explore the docs** — Learn about configuration, plugins, and CLI commands
+</Step>
+
+<Step number={3}>
+**Build something** — Create your first Pyra project and experience the speed
+</Step>
+
+---
+
+Ready to ignite your development workflow? Let's get started. 🔥

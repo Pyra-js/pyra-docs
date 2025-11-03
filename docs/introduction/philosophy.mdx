@@ -1,114 +1,147 @@
 ---
 title: Philosophy
-description: Understand the core principles and design philosophy behind Pyra.js.
+description: The design principles and vision behind Pyra.js — ignite, create, flow.
 sidebar_label: Philosophy
 slug: /docs/introduction/philosophy
 ---
 
-import Callout from '../components/Callout';
-
 # Philosophy
 
-<p className="text-xl text-gray-400 leading-relaxed">
-  Pyra.js is built on three core principles: <span className="pyra-gradient-text font-semibold">Ignite → Create → Flow</span>
-</p>
+Pyra.js is built on three core principles that guide every design decision: **Ignite → Create → Flow**.
 
 ## 🔥 Ignite
 
-**Start instantly, build immediately.**
+**Start instantly. No waiting.**
 
-Modern development shouldn't require extensive setup or configuration. Pyra ignites your workflow by:
+Modern development tools should respect your time. Pyra starts your dev server in milliseconds, not minutes. No bundling, no preprocessing — just instant feedback.
 
-- **Zero-config defaults** - Sensible defaults that work for 90% of projects
-- **Instant server startup** - Native ESM means no bundling during development
-- **Fast installation** - Minimal dependencies, maximum speed
-- **Quick scaffolding** - Create new projects in seconds
+```typescript
+// Traditional bundler
+$ npm run dev
+⏳ Bundling... (45s)
+⏳ Optimizing... (12s)
+✓ Ready in 57s
+
+// Pyra
+$ pyra dev
+✓ Ready in 52ms
+```
+
+The "ignite" phase is about removing friction. When you run `pyra dev`, you should see your app immediately. When you save a file, changes should appear instantly.
 
 <Callout type="tip">
-  The best build tool is the one you don't have to think about. Pyra gets out of your way so you can focus on building.
+Pyra achieves instant starts by serving source files directly as ES modules during development. No bundling means no wait time.
 </Callout>
 
-## ✨ Create
+## ⚙️ Create
 
-**Build with confidence and clarity.**
+**Build without barriers.**
 
-Development should be joyful, not frustrating. Pyra enhances your creative process through:
+Pyra gets out of your way. Sensible defaults, zero-config TypeScript, automatic path resolution — everything just works.
 
-- **TypeScript-first design** - Full type safety without configuration
-- **Clear error messages** - Helpful diagnostics that guide you to solutions
-- **Hot module replacement** - See changes instantly without losing state
-- **Framework flexibility** - Use any library or framework you prefer
+### Convention Over Configuration
 
-### Developer Experience Matters
+```typescript
+// No config needed for most projects
+// Just create src/main.ts and go
 
-We believe that developer experience directly impacts product quality. When tools are fast and intuitive, developers can focus on solving real problems instead of fighting their toolchain.
+import { render } from './app';
+render();
+```
+
+### TypeScript First
+
+Pyra treats TypeScript as a first-class citizen. Your `tsconfig.json` is respected automatically. Path aliases work without extra configuration.
+
+```json
+// tsconfig.json
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
+```
+
+```typescript
+// Works immediately in Pyra
+import { Button } from '@/components/Button';
+```
+
+### Framework Agnostic
+
+Pyra doesn't force you into a specific framework. Use React, Vue, Svelte, or vanilla TypeScript. Pyra adapts to your choice.
 
 ## 🌊 Flow
 
-**Stay in the zone, ship with confidence.**
+**Stay in the zone.**
 
-Great tools maintain your flow state. Pyra keeps you productive by:
+Great tools disappear. Pyra's HMR is so fast and reliable that you forget it's there. Changes appear instantly, state is preserved, and you stay focused on building.
 
-- **Predictable behavior** - Consistent results across development and production
-- **Optimized builds** - Automatic code splitting and tree-shaking
-- **Extensible architecture** - Powerful plugins when you need customization
-- **Production-ready** - Deploy with confidence knowing your build is optimized
+### Precise HMR
+
+Pyra's HMR only updates what changed. If you edit a component, only that component reloads. Your app state stays intact.
+
+```typescript
+// Edit this component
+export function Counter() {
+  const [count, setCount] = useState(0);
+  return <button onClick={() => setCount(count + 1)}>
+    Count: {count} {/* Change this text */}
+  </button>;
+}
+
+// HMR updates the text instantly
+// count state is preserved
+// No full page reload
+```
+
+### Predictable Builds
+
+Development and production should behave the same. Pyra uses the same module resolution in both modes, so you won't encounter "works in dev, breaks in prod" surprises.
 
 <Callout type="note">
-  Flow state is when you're fully immersed in your work. Pyra is designed to preserve that state by minimizing interruptions and maximizing responsiveness.
+Pyra uses native ES modules in dev and Rollup for production. This hybrid approach gives you speed during development and optimization for production.
 </Callout>
 
 ## Design Principles
 
-### 1. Speed is a Feature
+### 1. Performance is a Feature
 
-Performance isn't just about benchmarks—it's about maintaining developer momentum. Every millisecond saved in HMR or build time compounds over a project's lifetime.
+Speed isn't optional. Every millisecond matters. Pyra is obsessed with performance at every layer.
 
-### 2. Simplicity Over Complexity
+### 2. Simplicity Scales
 
-We favor simple, composable APIs over complex configuration. If a feature requires extensive setup, we reconsider whether it belongs in the core.
+Simple tools scale better than complex ones. Pyra's API surface is small by design. Less to learn, less to break.
 
-### 3. TypeScript as a First-Class Citizen
+### 3. Defaults Matter
 
-TypeScript isn't an afterthought—it's fundamental to Pyra's design. Type safety improves code quality and developer confidence.
+Most projects need the same things. Pyra's defaults cover 90% of use cases. Configuration is for the other 10%.
 
-### 4. Leverage Native Platform Features
+### 4. Extensibility Without Complexity
 
-We build on web standards and native browser capabilities rather than reinventing the wheel. ESM, import maps, and modern JavaScript features are core to Pyra's architecture.
+Plugins should be powerful but not required. Pyra works great out of the box. Plugins are there when you need them.
 
-### 5. Extensibility Through Plugins
+### 5. Developer Experience First
 
-The core should be lean and fast. Advanced features live in plugins, keeping the base tool simple while enabling powerful customization.
+Tools should feel good to use. Fast feedback, clear errors, helpful warnings — these aren't nice-to-haves, they're requirements.
 
-## Inspiration
+## What This Means for You
 
-Pyra.js draws inspiration from:
+When you use Pyra, you're choosing:
 
-- **Vite** - For pioneering native ESM development
-- **esbuild** - For proving native tooling can be orders of magnitude faster
-- **Rollup** - For elegant plugin architecture
-- **TypeScript** - For demonstrating the value of type safety
+- **Speed** — Instant starts, instant updates
+- **Simplicity** — Minimal config, maximum productivity
+- **Reliability** — Predictable behavior, clear errors
+- **Flexibility** — Extend when needed, stay simple when not
 
-## Community Values
-
-We're building Pyra.js in the open with these values:
-
-- **Transparency** - Open development, clear roadmap, honest communication
-- **Inclusivity** - Welcoming contributors of all skill levels
-- **Pragmatism** - Solving real problems over chasing trends
-- **Quality** - Shipping features when they're ready, not rushed
-
-<Callout type="tip">
-  Want to contribute? Check out our [GitHub repository](https://github.com/pyra-js/pyra) and join the conversation.
+<Callout type="warn">
+Pyra is opinionated. If you need deep customization of every build step, Webpack might be a better fit. Pyra optimizes for the 90% use case.
 </Callout>
 
-## The Name "Pyra"
+---
 
-The name "Pyra" comes from the Greek word for fire (πυρά). Like fire, Pyra:
+**Ignite your project. Create without friction. Flow through development.**
 
-- **Ignites** quickly and spreads rapidly
-- **Transforms** raw materials into something useful
-- **Provides energy** to power your development
-- **Illuminates** the path forward with clear feedback
-
-Fire has been humanity's tool for creation since the beginning. Pyra aims to be that tool for modern web development.
+That's the Pyra way. 🔥

@@ -1,275 +1,400 @@
 ---
 title: Environment Variables
-description: Manage environment variables in Pyra.js applications.
+description: Use environment variables in Pyra.js to configure your app for different environments.
 sidebar_label: Environment Variables
 slug: /docs/guides/environment-variables
 ---
 
-import GradientCode from '../components/GradientCode';
-import Terminal from '../components/Terminal';
-import Callout from '../components/Callout';
-
 # Environment Variables
 
-<p className="text-xl text-gray-400 leading-relaxed">
-  Securely manage configuration and secrets with environment variables.
-</p>
-
-## The PYRA_ Prefix
-
-Only variables prefixed with `PYRA_` are exposed to your client code:
-
-<GradientCode language="bash" title=".env">
-{`# ✅ Exposed to client
-PYRA_API_URL=https://api.example.com
-PYRA_FEATURE_FLAG=true
-
-# ❌ NOT exposed to client (no PYRA_ prefix)
-DATABASE_URL=postgresql://...
-SECRET_KEY=abc123`}
-</GradientCode>
-
-<Callout type="warn">
-  This prevents accidentally leaking secrets to the client. Never put sensitive data in `PYRA_` variables!
-</Callout>
+Pyra has built-in support for environment variables, making it easy to configure your app for different environments.
 
 ## .env Files
 
-Create `.env` files in your project root:
+Pyra automatically loads environment variables from `.env` files in your project root:
 
-<GradientCode language="bash" title=".env">
-{`PYRA_API_URL=https://api.example.com
-PYRA_APP_TITLE=My App
-PYRA_ENABLE_ANALYTICS=false`}
-</GradientCode>
-
-## Environment-Specific Files
-
-Use different files for different environments:
-
-<GradientCode language="plaintext">
-{`.env                    # Loaded in all cases
-.env.local              # Local overrides (gitignored)
-.env.development        # Development only
-.env.development.local  # Local dev overrides
-.env.production         # Production only
-.env.production.local   # Local prod overrides`}
-</GradientCode>
-
-Priority (highest to lowest):
-1. `.env.[mode].local`
-2. `.env.[mode]`
-3. `.env.local`
-4. `.env`
+```
+.env                # loaded in all cases
+.env.local          # loaded in all cases, ignored by git
+.env.[mode]         # only loaded in specified mode
+.env.[mode].local   # only loaded in specified mode, ignored by git
+```
 
 <Callout type="tip">
-  Add `.env.local` to `.gitignore` to keep local overrides out of version control.
+Add `.env.local` and `.env.*.local` to your `.gitignore` to keep secrets out of version control.
 </Callout>
 
-## Accessing Variables
+## File Priority
 
-Use `import.meta.env` to access variables:
+Files are loaded in this order (later files override earlier ones):
 
-<GradientCode language="typescript">
-{`// Access environment variables
-const apiUrl = import.meta.env.PYRA_API_URL;
-const appTitle = import.meta.env.PYRA_APP_TITLE;
-const analyticsEnabled = import.meta.env.PYRA_ENABLE_ANALYTICS === 'true';
+<Step number={1}>
+`.env` — Base environment variables
+</Step>
 
-// Built-in variables
-const isDev = import.meta.env.DEV;
-const isProd = import.meta.env.PROD;
-const mode = import.meta.env.MODE; // 'development' or 'production'`}
+<Step number={2}>
+`.env.local` — Local overrides (not committed)
+</Step>
+
+<Step number={3}>
+`.env.[mode]` — Mode-specific variables (e.g., `.env.production`)
+</Step>
+
+<Step number={4}>
+`.env.[mode].local` — Mode-specific local overrides
+</Step>
+
+## Example .env Files
+
+### .env
+
+<GradientCode language="bash">
+# Base configuration
+PYRA_APP_TITLE=My Pyra App
+PYRA_API_URL=https://api.example.com
+PYRA_ENABLE_ANALYTICS=false
 </GradientCode>
 
-## Built-in Variables
+### .env.development
+
+<GradientCode language="bash">
+# Development overrides
+PYRA_API_URL=http://localhost:8080
+PYRA_ENABLE_ANALYTICS=false
+PYRA_DEBUG=true
+</GradientCode>
+
+### .env.production
+
+<GradientCode language="bash">
+# Production overrides
+PYRA_API_URL=https://api.production.com
+PYRA_ENABLE_ANALYTICS=true
+PYRA_DEBUG=false
+</GradientCode>
+
+### .env.local
+
+<GradientCode language="bash">
+# Local secrets (not committed)
+PYRA_API_KEY=sk_live_abc123xyz789
+PYRA_STRIPE_KEY=pk_test_def456uvw012
+</GradientCode>
+
+## Accessing Environment Variables
+
+### In Client Code
+
+Only variables prefixed with `PYRA_` are exposed to your client code:
+
+<GradientCode language="typescript">
+// ✅ Accessible (prefixed with PYRA_)
+const apiUrl = import.meta.env.PYRA_API_URL;
+const appTitle = import.meta.env.PYRA_APP_TITLE;
+
+// ❌ Not accessible (no PYRA_ prefix)
+const secret = import.meta.env.SECRET_KEY; // undefined
+</GradientCode>
+
+<Callout type="warn">
+Never put secrets in `PYRA_` prefixed variables! They're exposed to the client and visible in your bundle.
+</Callout>
+
+### Built-in Variables
 
 Pyra provides these variables automatically:
 
-| Variable | Type | Description |
-|----------|------|-------------|
-| `import.meta.env.MODE` | `string` | App mode (`development` or `production`) |
-| `import.meta.env.DEV` | `boolean` | Whether in dev mode |
-| `import.meta.env.PROD` | `boolean` | Whether in prod mode |
-| `import.meta.env.SSR` | `boolean` | Whether in SSR mode |
-| `import.meta.env.BASE_URL` | `string` | Base public path |
+<GradientCode language="typescript">
+import.meta.env.MODE          // 'development' | 'production'
+import.meta.env.BASE_URL      // base public path
+import.meta.env.PROD          // boolean, true in production
+import.meta.env.DEV           // boolean, true in development
+import.meta.env.SSR           // boolean, true during SSR
+</GradientCode>
 
-## TypeScript IntelliSense
+### TypeScript IntelliSense
 
-Add type definitions for your variables:
+Add type definitions for your environment variables:
 
-<GradientCode language="typescript" title="src/env.d.ts">
-{`/// <reference types="pyra/client" />
+<GradientCode language="typescript">
+// src/env.d.ts
+/// <reference types="pyra/client" />
 
 interface ImportMetaEnv {
   readonly PYRA_API_URL: string;
   readonly PYRA_APP_TITLE: string;
   readonly PYRA_ENABLE_ANALYTICS: string;
+  readonly PYRA_DEBUG?: string;
 }
 
 interface ImportMeta {
   readonly env: ImportMetaEnv;
-}`}
+}
 </GradientCode>
 
-Now you get full IntelliSense:
+Now you get autocomplete and type checking:
 
 <GradientCode language="typescript">
-{`// ✅ TypeScript knows about these
-const apiUrl = import.meta.env.PYRA_API_URL; // string
-const title = import.meta.env.PYRA_APP_TITLE; // string`}
+// TypeScript knows this exists and is a string
+const apiUrl: string = import.meta.env.PYRA_API_URL;
 </GradientCode>
+
+## Custom Prefix
+
+Change the prefix from `PYRA_` to something else:
+
+<GradientCode language="typescript">
+// pyra.config.ts
+import { defineConfig } from 'pyra';
+
+export default defineConfig({
+  envPrefix: 'APP_', // Now use APP_ instead of PYRA_
+});
+</GradientCode>
+
+Or use multiple prefixes:
+
+<GradientCode language="typescript">
+export default defineConfig({
+  envPrefix: ['PYRA_', 'APP_', 'PUBLIC_'],
+});
+</GradientCode>
+
+## Modes
+
+Pyra runs in different modes depending on the command:
+
+- **`development`** — `pyra dev`
+- **`production`** — `pyra build`
+
+Override the mode with `--mode`:
+
+<Terminal>
+pyra build --mode staging
+</Terminal>
+
+This loads `.env.staging` and `.env.staging.local`.
 
 ## Using in HTML
 
-Reference variables in `index.html`:
+Environment variables work in `index.html` too:
 
-<GradientCode language="html" title="index.html">
-{`<!DOCTYPE html>
+<GradientCode language="html">
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <title>%PYRA_APP_TITLE%</title>
+    <meta name="description" content="%PYRA_APP_DESCRIPTION%" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
   </body>
-</html>`}
-</GradientCode>
-
-## Loading Variables in Config
-
-Access env vars in `pyra.config.ts`:
-
-<GradientCode language="typescript" title="pyra.config.ts">
-{`import { defineConfig, loadEnv } from 'pyra';
-
-export default defineConfig(({ mode }) => {
-  // Load env file based on mode
-  const env = loadEnv(mode, process.cwd(), '');
-  
-  return {
-    define: {
-      __APP_VERSION__: JSON.stringify(env.APP_VERSION)
-    },
-    server: {
-      port: parseInt(env.PORT || '3000')
-    }
-  };
-});`}
+</html>
 </GradientCode>
 
 <Callout type="note">
-  In config files, you can access ALL variables (not just `PYRA_` prefixed ones) since config runs in Node.js.
+HTML replacement happens at build time. The variables must be defined when you run `pyra build`.
 </Callout>
 
-## Replacing Variables
+## Define Global Constants
 
-Use `define` to replace variables at build time:
-
-<GradientCode language="typescript" title="pyra.config.ts">
-{`export default defineConfig({
-  define: {
-    __APP_VERSION__: JSON.stringify('1.0.0'),
-    __BUILD_TIME__: JSON.stringify(new Date().toISOString())
-  }
-});`}
-</GradientCode>
+For non-environment variables, use `define`:
 
 <GradientCode language="typescript">
-{`// Use in your code
+// pyra.config.ts
+import { defineConfig } from 'pyra';
+
+export default defineConfig({
+  define: {
+    __APP_VERSION__: JSON.stringify('1.0.0'),
+    __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+    __FEATURE_FLAGS__: JSON.stringify({
+      newUI: true,
+      betaFeatures: false,
+    }),
+  },
+});
+</GradientCode>
+
+Access them directly:
+
+<GradientCode language="typescript">
 console.log('App version:', __APP_VERSION__);
-console.log('Built at:', __BUILD_TIME__);`}
+console.log('Built at:', __BUILD_TIME__);
+
+if (__FEATURE_FLAGS__.newUI) {
+  // Use new UI
+}
 </GradientCode>
 
-## Production Variables
-
-Set production variables on your hosting platform:
-
-### Vercel
-
-<Terminal>vercel env add PYRA_API_URL</Terminal>
-
-### Netlify
-
-Add in Netlify dashboard: Site settings → Environment variables
-
-### Docker
-
-<GradientCode language="dockerfile" title="Dockerfile">
-{`FROM node:18
-WORKDIR /app
-COPY . .
-RUN npm install
-RUN npm run build
-
-ENV PYRA_API_URL=https://api.example.com
-
-CMD ["npm", "run", "preview"]`}
-</GradientCode>
-
-## Security Best Practices
-
-### ✅ Do
-
-- Use `PYRA_` prefix for client-safe variables
-- Store secrets in `.env.local` (gitignored)
-- Use different values per environment
-- Validate variables at runtime
-
-### ❌ Don't
-
-- Put secrets in `PYRA_` variables
-- Commit `.env.local` to git
-- Hardcode sensitive data
-- Expose API keys to the client
-
-<Callout type="danger">
-  Remember: Anything with the `PYRA_` prefix is PUBLIC and visible in your client bundle. Never put secrets there!
+<Callout type="tip">
+Remember to add type definitions for your global constants in `env.d.ts`.
 </Callout>
 
-## Example: API Configuration
+## Best Practices
 
-<GradientCode language="bash" title=".env.development">
-{`PYRA_API_URL=http://localhost:4000
-PYRA_API_TIMEOUT=5000`}
+### 1. Use .env.local for Secrets
+
+<GradientCode language="bash">
+# .env.local (not committed)
+PYRA_STRIPE_SECRET=sk_live_...
+PYRA_DATABASE_URL=postgres://...
 </GradientCode>
 
-<GradientCode language="bash" title=".env.production">
-{`PYRA_API_URL=https://api.production.com
-PYRA_API_TIMEOUT=10000`}
+### 2. Provide Defaults in .env
+
+<GradientCode language="bash">
+# .env (committed)
+PYRA_API_URL=https://api.example.com
+PYRA_TIMEOUT=5000
 </GradientCode>
 
-<GradientCode language="typescript" title="src/api/client.ts">
-{`const API_URL = import.meta.env.PYRA_API_URL;
-const API_TIMEOUT = parseInt(import.meta.env.PYRA_API_TIMEOUT);
+### 3. Document Required Variables
 
-export const apiClient = axios.create({
-  baseURL: API_URL,
-  timeout: API_TIMEOUT
-});`}
+Create a `.env.example` file:
+
+<GradientCode language="bash">
+# .env.example
+PYRA_API_URL=https://api.example.com
+PYRA_API_KEY=your_api_key_here
+PYRA_ENABLE_ANALYTICS=false
+</GradientCode>
+
+### 4. Validate at Runtime
+
+<GradientCode language="typescript">
+// src/config.ts
+const requiredEnvVars = [
+  'PYRA_API_URL',
+  'PYRA_APP_TITLE',
+] as const;
+
+for (const envVar of requiredEnvVars) {
+  if (!import.meta.env[envVar]) {
+    throw new Error(`Missing required environment variable: ${envVar}`);
+  }
+}
+
+export const config = {
+  apiUrl: import.meta.env.PYRA_API_URL,
+  appTitle: import.meta.env.PYRA_APP_TITLE,
+  enableAnalytics: import.meta.env.PYRA_ENABLE_ANALYTICS === 'true',
+};
+</GradientCode>
+
+### 5. Use Type-Safe Config
+
+<GradientCode language="typescript">
+// src/config.ts
+interface Config {
+  apiUrl: string;
+  appTitle: string;
+  enableAnalytics: boolean;
+  debug: boolean;
+}
+
+function getConfig(): Config {
+  return {
+    apiUrl: import.meta.env.PYRA_API_URL,
+    appTitle: import.meta.env.PYRA_APP_TITLE,
+    enableAnalytics: import.meta.env.PYRA_ENABLE_ANALYTICS === 'true',
+    debug: import.meta.env.PYRA_DEBUG === 'true',
+  };
+}
+
+export const config = getConfig();
+</GradientCode>
+
+## Common Patterns
+
+### API Configuration
+
+<GradientCode language="typescript">
+// src/api/client.ts
+const API_URL = import.meta.env.PYRA_API_URL;
+const API_KEY = import.meta.env.PYRA_API_KEY;
+
+export async function fetchData(endpoint: string) {
+  const response = await fetch(`${API_URL}${endpoint}`, {
+    headers: {
+      'Authorization': `Bearer ${API_KEY}`,
+    },
+  });
+  
+  return response.json();
+}
+</GradientCode>
+
+### Feature Flags
+
+<GradientCode language="typescript">
+// src/features.ts
+export const features = {
+  newUI: import.meta.env.PYRA_FEATURE_NEW_UI === 'true',
+  betaFeatures: import.meta.env.PYRA_FEATURE_BETA === 'true',
+  analytics: import.meta.env.PYRA_ENABLE_ANALYTICS === 'true',
+};
+
+// Usage
+if (features.newUI) {
+  // Render new UI
+}
+</GradientCode>
+
+### Environment-Specific Behavior
+
+<GradientCode language="typescript">
+// src/logger.ts
+const isDev = import.meta.env.DEV;
+
+export function log(...args: any[]) {
+  if (isDev) {
+    console.log('[DEV]', ...args);
+  }
+}
+
+export function error(...args: any[]) {
+  if (isDev) {
+    console.error('[DEV]', ...args);
+  } else {
+    // Send to error tracking service
+    sendToSentry(args);
+  }
+}
 </GradientCode>
 
 ## Troubleshooting
 
-### Variables Not Updating
+### Variables Not Loading
 
-Restart the dev server after changing `.env` files:
-
-<Terminal>pyra dev</Terminal>
+<Callout type="warn">
+Make sure your `.env` file is in the project root (same directory as `pyra.config.ts`).
+</Callout>
 
 ### Variables Undefined
 
-Check:
-1. Variable has `PYRA_` prefix
-2. `.env` file is in project root
-3. Dev server was restarted
-4. No typos in variable name
+Check that:
+1. Variable is prefixed with `PYRA_` (or your custom prefix)
+2. `.env` file is in the correct location
+3. You've restarted the dev server after changing `.env`
 
 ### TypeScript Errors
 
-Add type definitions in `src/env.d.ts` as shown above.
+Add type definitions in `src/env.d.ts`:
+
+<GradientCode language="typescript">
+interface ImportMetaEnv {
+  readonly PYRA_YOUR_VARIABLE: string;
+}
+</GradientCode>
 
 ## Next Steps
 
-- [Path Aliases](/docs/guides/path-aliases) - Configure import aliases
-- [Configuration](/docs/configuration/overview) - Advanced config options
+- **[Path Aliases](/docs/guides/path-aliases)** — Simplify imports with path aliases
+- **[Configuration](/docs/configuration/overview)** — Learn about `pyra.config.ts`
+- **[Deployment](/docs/guides/deployment)** — Deploy your Pyra app
+
+---
+
+Configure with confidence. 🔥

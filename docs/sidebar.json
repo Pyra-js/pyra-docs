@@ -1,70 +1,82 @@
 {
-  "docs": [
+  "sections": [
     {
-      "type": "category",
-      "label": "Introduction",
+      "title": "Introduction",
       "items": [
-        "introduction/overview",
-        "introduction/philosophy"
+        {
+          "label": "Overview",
+          "path": "/docs/introduction/overview"
+        },
+        {
+          "label": "Philosophy",
+          "path": "/docs/introduction/philosophy"
+        }
       ]
     },
     {
-      "type": "category",
-      "label": "Getting Started",
+      "title": "Getting Started",
       "items": [
-        "getting-started/installation",
-        "getting-started/quick-start",
-        "getting-started/project-structure"
+        {
+          "label": "Installation",
+          "path": "/docs/getting-started/installation"
+        },
+        {
+          "label": "Quick Start",
+          "path": "/docs/getting-started/quick-start"
+        },
+        {
+          "label": "Project Structure",
+          "path": "/docs/getting-started/project-structure"
+        }
       ]
     },
     {
-      "type": "category",
-      "label": "Configuration",
+      "title": "Configuration",
       "items": [
-        "configuration/overview",
-        "configuration/server-options",
-        "configuration/build-options",
-        "configuration/resolve-options"
+        {
+          "label": "Overview",
+          "path": "/docs/configuration/overview"
+        }
       ]
     },
     {
-      "type": "category",
-      "label": "Plugins",
+      "title": "CLI",
       "items": [
-        "plugins/overview",
-        "plugins/plugin-api",
-        "plugins/creating-plugins",
-        "plugins/official-plugins"
+        {
+          "label": "pyra dev",
+          "path": "/docs/cli/dev"
+        }
       ]
     },
     {
-      "type": "category",
-      "label": "CLI",
+      "title": "Plugins",
       "items": [
-        "cli/overview",
-        "cli/dev",
-        "cli/build",
-        "cli/preview",
-        "cli/graph"
+        {
+          "label": "Overview",
+          "path": "/docs/plugins/overview"
+        },
+        {
+          "label": "Plugin API",
+          "path": "/docs/plugins/plugin-api"
+        }
       ]
     },
     {
-      "type": "category",
-      "label": "Guides",
+      "title": "Guides",
       "items": [
-        "guides/environment-variables",
-        "guides/path-aliases",
-        "guides/ssr-static-export",
-        "guides/optimizing-deps"
+        {
+          "label": "Environment Variables",
+          "path": "/docs/guides/environment-variables"
+        }
       ]
     },
     {
-      "type": "category",
-      "label": "API Reference",
+      "title": "API Reference",
       "items": [
-        "api/config-types",
-        "api/plugin-types",
-        "api/javascript-api"
+        {
+          "label": "Config Types",
+          "path": "/docs/api/config-types"
+        }
       ]
     }
   ]

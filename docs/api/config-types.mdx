@@ -1,456 +1,464 @@
 ---
-title: API Config Types
-description: TypeScript type definitions for Pyra.js configuration.
+title: Configuration Types
+description: Complete TypeScript type reference for Pyra configuration.
 sidebar_label: Config Types
 slug: /docs/api/config-types
 ---
 
-import GradientCode from '../components/GradientCode';
-import Callout from '../components/Callout';
+# Configuration Types
 
-# Config Types
+Complete TypeScript type definitions for `pyra.config.ts`.
 
-<p className="text-xl text-gray-400 leading-relaxed">
-  Complete TypeScript type definitions for Pyra.js configuration.
-</p>
+## PyraConfig
 
-## UserConfig
-
-The main configuration interface:
+The main configuration object for Pyra.
 
 <GradientCode language="typescript">
-{`interface UserConfig {
-  /**
-   * Project root directory
-   * @default process.cwd()
-   */
+interface PyraConfig {
+  /** Project root directory */
   root?: string;
-
-  /**
-   * Base public path
-   * @default '/'
-   */
+  
+  /** Base public path */
   base?: string;
-
-  /**
-   * Application mode
-   * @default 'development'
-   */
-  mode?: 'development' | 'production';
-
-  /**
-   * Define global constants
-   */
-  define?: Record<string, any>;
-
-  /**
-   * Array of plugins
-   */
-  plugins?: (Plugin | Plugin[])[];
-
-  /**
-   * Path resolution options
-   */
-  resolve?: ResolveOptions;
-
-  /**
-   * CSS options
-   */
-  css?: CSSOptions;
-
-  /**
-   * Development server options
-   */
-  server?: ServerOptions;
-
-  /**
-   * Build options
-   */
+  
+  /** Build-specific options */
   build?: BuildOptions;
-
-  /**
-   * Preview server options
-   */
+  
+  /** Dev server options */
+  server?: ServerOptions;
+  
+  /** Preview server options */
   preview?: PreviewOptions;
-
-  /**
-   * Dependency optimization options
-   */
-  optimizeDeps?: OptimizeDepsOptions;
-
-  /**
-   * SSR options
-   */
-  ssr?: SSROptions;
-}`}
-</GradientCode>
-
-## ServerOptions
-
-Development server configuration:
-
-<GradientCode language="typescript">
-{`interface ServerOptions {
-  /**
-   * Server port
-   * @default 3000
-   */
-  port?: number;
-
-  /**
-   * Strict port - exit if port is in use
-   * @default false
-   */
-  strictPort?: boolean;
-
-  /**
-   * Server host
-   * @default false
-   */
-  host?: string | boolean;
-
-  /**
-   * Enable HTTPS
-   */
-  https?: boolean | {
-    key: string;
-    cert: string;
-  };
-
-  /**
-   * Open browser on start
-   * @default false
-   */
-  open?: boolean | string;
-
-  /**
-   * Proxy configuration
-   */
-  proxy?: Record<string, string | ProxyOptions>;
-
-  /**
-   * Enable CORS
-   * @default true
-   */
-  cors?: boolean | CorsOptions;
-
-  /**
-   * HMR options
-   */
-  hmr?: boolean | {
-    protocol?: string;
-    host?: string;
-    port?: number;
-    path?: string;
-    timeout?: number;
-    overlay?: boolean;
-  };
-
-  /**
-   * Custom middleware
-   */
-  middlewares?: Middleware[];
-}`}
+  
+  /** Dependency optimization options */
+  optimizeDeps?: DepOptimizationOptions;
+  
+  /** Module resolution options */
+  resolve?: ResolveOptions;
+  
+  /** CSS options */
+  css?: CSSOptions;
+  
+  /** Plugin array */
+  plugins?: PyraPlugin[];
+  
+  /** Define global constants */
+  define?: Record<string, any>;
+  
+  /** Environment variables prefix */
+  envPrefix?: string | string[];
+  
+  /** Public directory */
+  publicDir?: string;
+  
+  /** Cache directory */
+  cacheDir?: string;
+}
 </GradientCode>
 
 ## BuildOptions
 
-Production build configuration:
+Options for production builds.
 
 <GradientCode language="typescript">
-{`interface BuildOptions {
-  /**
-   * Output directory
-   * @default 'dist'
-   */
+interface BuildOptions {
+  /** Output directory */
   outDir?: string;
-
-  /**
-   * Assets directory (relative to outDir)
-   * @default 'assets'
-   */
+  
+  /** Assets directory (relative to outDir) */
   assetsDir?: string;
-
-  /**
-   * Static asset inline threshold (bytes)
-   * @default 4096
-   */
+  
+  /** Inline assets smaller than this (bytes) */
   assetsInlineLimit?: number;
-
-  /**
-   * Enable CSS code splitting
-   * @default true
-   */
-  cssCodeSplit?: boolean;
-
-  /**
-   * Generate sourcemaps
-   * @default false
-   */
+  
+  /** Generate sourcemaps */
   sourcemap?: boolean | 'inline' | 'hidden';
-
-  /**
-   * Rollup options
-   */
+  
+  /** Rollup options */
   rollupOptions?: RollupOptions;
-
-  /**
-   * Minification
-   * @default 'esbuild'
-   */
-  minify?: boolean | 'esbuild' | 'terser';
-
-  /**
-   * Terser options (if minify is 'terser')
-   */
-  terserOptions?: TerserOptions;
-
-  /**
-   * Emit manifest.json
-   * @default false
-   */
-  manifest?: boolean;
-
-  /**
-   * SSR build
-   * @default false
-   */
-  ssr?: boolean | string;
-
-  /**
-   * Browser compatibility target
-   * @default 'es2020'
-   */
+  
+  /** Minify output */
+  minify?: boolean | 'terser' | 'esbuild';
+  
+  /** Target browsers */
   target?: string | string[];
-
-  /**
-   * Chunk size warning limit (KB)
-   * @default 500
-   */
+  
+  /** Emit manifest.json */
+  manifest?: boolean | string;
+  
+  /** Enable/disable CSS code splitting */
+  cssCodeSplit?: boolean;
+  
+  /** Chunk size warning limit (kB) */
   chunkSizeWarningLimit?: number;
-
-  /**
-   * Watch mode
-   */
+  
+  /** Watch mode */
   watch?: WatcherOptions | null;
-}`}
+}
+</GradientCode>
+
+<Callout type="note">
+Most build options have sensible defaults. You typically only need to configure `outDir` and `sourcemap`.
+</Callout>
+
+## ServerOptions
+
+Development server configuration.
+
+<GradientCode language="typescript">
+interface ServerOptions {
+  /** Server host */
+  host?: string | boolean;
+  
+  /** Server port */
+  port?: number;
+  
+  /** Strict port (exit if port is in use) */
+  strictPort?: boolean;
+  
+  /** Enable CORS */
+  cors?: boolean | CorsOptions;
+  
+  /** Open browser on start */
+  open?: boolean | string;
+  
+  /** Proxy configuration */
+  proxy?: Record<string, string | ProxyOptions>;
+  
+  /** HMR options */
+  hmr?: boolean | HmrOptions;
+  
+  /** Middleware mode */
+  middlewareMode?: boolean | 'ssr' | 'html';
+  
+  /** File system options */
+  fs?: FileSystemOptions;
+  
+  /** Origin for asset URLs */
+  origin?: string;
+}
+</GradientCode>
+
+### HmrOptions
+
+<GradientCode language="typescript">
+interface HmrOptions {
+  /** HMR protocol */
+  protocol?: string;
+  
+  /** HMR host */
+  host?: string;
+  
+  /** HMR port */
+  port?: number;
+  
+  /** HMR path */
+  path?: string;
+  
+  /** HMR timeout */
+  timeout?: number;
+  
+  /** Show error overlay */
+  overlay?: boolean;
+  
+  /** Client error overlay */
+  clientPort?: number;
+  
+  /** HMR server */
+  server?: Server;
+}
+</GradientCode>
+
+### ProxyOptions
+
+<GradientCode language="typescript">
+interface ProxyOptions {
+  /** Target URL */
+  target: string;
+  
+  /** Change origin header */
+  changeOrigin?: boolean;
+  
+  /** Rewrite path */
+  rewrite?: (path: string) => string;
+  
+  /** Configure proxy */
+  configure?: (proxy: any, options: any) => void;
+  
+  /** WebSocket proxy */
+  ws?: boolean;
+}
 </GradientCode>
 
 ## ResolveOptions
 
-Module resolution configuration:
+Module resolution configuration.
 
 <GradientCode language="typescript">
-{`interface ResolveOptions {
-  /**
-   * Path aliases
-   */
-  alias?: Record<string, string> | Array<{
-    find: string | RegExp;
-    replacement: string;
-  }>;
-
-  /**
-   * Extensions to try when resolving imports
-   * @default ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
-   */
+interface ResolveOptions {
+  /** Path aliases */
+  alias?: Record<string, string> | Array<{ find: string | RegExp; replacement: string }>;
+  
+  /** Extensions to try */
   extensions?: string[];
-
-  /**
-   * Conditions for package.json exports
-   */
+  
+  /** Conditions for package.json exports */
   conditions?: string[];
-
-  /**
-   * Main fields in package.json
-   * @default ['module', 'jsnext:main', 'jsnext']
-   */
+  
+  /** Main fields in package.json */
   mainFields?: string[];
-
-  /**
-   * Preserve symlinks
-   * @default false
-   */
+  
+  /** Preserve symlinks */
   preserveSymlinks?: boolean;
-}`}
+}
 </GradientCode>
 
-## OptimizeDepsOptions
-
-Dependency pre-bundling configuration:
+### Example Usage
 
 <GradientCode language="typescript">
-{`interface OptimizeDepsOptions {
-  /**
-   * Dependencies to include in pre-bundling
-   */
-  include?: string[];
+import { defineConfig } from 'pyra';
+import path from 'path';
 
-  /**
-   * Dependencies to exclude from pre-bundling
-   */
-  exclude?: string[];
-
-  /**
-   * Esbuild options
-   */
-  esbuildOptions?: EsbuildOptions;
-
-  /**
-   * Force re-bundle dependencies
-   * @default false
-   */
-  force?: boolean;
-}`}
+export default defineConfig({
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+      '@components': path.resolve(__dirname, './src/components'),
+      '@utils': path.resolve(__dirname, './src/utils'),
+    },
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+  },
+});
 </GradientCode>
+
+## DepOptimizationOptions
+
+Dependency pre-bundling configuration.
+
+<GradientCode language="typescript">
+interface DepOptimizationOptions {
+  /** Dependencies to include */
+  include?: string[];
+  
+  /** Dependencies to exclude */
+  exclude?: string[];
+  
+  /** Esbuild options */
+  esbuildOptions?: EsbuildOptions;
+  
+  /** Force optimization */
+  force?: boolean;
+  
+  /** Disabled optimization */
+  disabled?: boolean | 'build' | 'dev';
+}
+</GradientCode>
+
+### Example Usage
+
+<GradientCode language="typescript">
+export default defineConfig({
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'lodash-es'],
+    exclude: ['@my-local-package'],
+    esbuildOptions: {
+      target: 'es2020',
+    },
+  },
+});
+</GradientCode>
+
+<Callout type="tip">
+Add dependencies to `include` if they're slow to load or cause issues during development.
+</Callout>
 
 ## CSSOptions
 
-CSS processing configuration:
+CSS processing configuration.
 
 <GradientCode language="typescript">
-{`interface CSSOptions {
-  /**
-   * CSS modules options
-   */
-  modules?: {
-    scopeBehaviour?: 'global' | 'local';
-    generateScopedName?: string | ((name: string, filename: string) => string);
-    hashPrefix?: string;
-    localsConvention?: 'camelCase' | 'camelCaseOnly' | 'dashes' | 'dashesOnly';
-  };
-
-  /**
-   * PostCSS options
-   */
-  postcss?: string | {
-    plugins?: any[];
-    [key: string]: any;
-  };
-
-  /**
-   * CSS preprocessor options
-   */
-  preprocessorOptions?: {
-    scss?: any;
-    sass?: any;
-    less?: any;
-    stylus?: any;
-  };
-}`}
+interface CSSOptions {
+  /** CSS modules options */
+  modules?: CSSModulesOptions;
+  
+  /** PostCSS options */
+  postcss?: string | PostCSSOptions;
+  
+  /** CSS preprocessor options */
+  preprocessorOptions?: Record<string, any>;
+  
+  /** Dev sourcemap */
+  devSourcemap?: boolean;
+}
 </GradientCode>
 
-## ProxyOptions
-
-Proxy configuration for dev server:
+### CSSModulesOptions
 
 <GradientCode language="typescript">
-{`interface ProxyOptions {
-  /**
-   * Target URL
-   */
-  target: string;
-
-  /**
-   * Change origin header
-   * @default false
-   */
-  changeOrigin?: boolean;
-
-  /**
-   * Rewrite path
-   */
-  rewrite?: (path: string) => string;
-
-  /**
-   * Configure proxy
-   */
-  configure?: (proxy: any, options: ProxyOptions) => void;
-
-  /**
-   * WebSocket proxy
-   * @default false
-   */
-  ws?: boolean;
-
-  /**
-   * Bypass proxy for certain requests
-   */
-  bypass?: (req: any, res: any, options: ProxyOptions) => void | null | undefined | false | string;
-}`}
+interface CSSModulesOptions {
+  /** Scope behavior */
+  scopeBehaviour?: 'global' | 'local';
+  
+  /** Class name generation */
+  generateScopedName?: string | ((name: string, filename: string, css: string) => string);
+  
+  /** Hash prefix */
+  hashPrefix?: string;
+  
+  /** Global module paths */
+  globalModulePaths?: RegExp[];
+}
 </GradientCode>
 
-## SSROptions
+## PyraPlugin
 
-Server-side rendering configuration:
+Plugin interface for extending Pyra.
 
 <GradientCode language="typescript">
-{`interface SSROptions {
-  /**
-   * External modules for SSR
-   */
-  external?: string[];
+interface PyraPlugin {
+  /** Plugin name */
+  name: string;
+  
+  /** Enforce plugin order */
+  enforce?: 'pre' | 'post';
+  
+  /** Apply plugin conditionally */
+  apply?: 'serve' | 'build' | ((config: PyraConfig, env: ConfigEnv) => boolean);
+  
+  /** Modify config */
+  config?: (config: PyraConfig, env: ConfigEnv) => PyraConfig | null | void | Promise<PyraConfig | null | void>;
+  
+  /** Resolved config hook */
+  configResolved?: (config: ResolvedConfig) => void | Promise<void>;
+  
+  /** Configure server */
+  configureServer?: (server: PyraDevServer) => (() => void) | void | Promise<(() => void) | void>;
+  
+  /** Transform index.html */
+  transformIndexHtml?: (html: string, ctx: IndexHtmlTransformContext) => string | HtmlTagDescriptor[] | Promise<string | HtmlTagDescriptor[]>;
+  
+  /** Resolve module ID */
+  resolveId?: (source: string, importer: string | undefined, options: ResolveIdOptions) => string | null | Promise<string | null>;
+  
+  /** Load module */
+  load?: (id: string) => string | null | Promise<string | null>;
+  
+  /** Transform module */
+  transform?: (code: string, id: string) => TransformResult | Promise<TransformResult>;
+  
+  /** Handle HMR update */
+  handleHotUpdate?: (ctx: HmrContext) => Array<ModuleNode> | void | Promise<Array<ModuleNode> | void>;
+  
+  /** Build start hook */
+  buildStart?: (options: NormalizedInputOptions) => void | Promise<void>;
+  
+  /** Build end hook */
+  buildEnd?: (error?: Error) => void | Promise<void>;
+  
+  /** Generate bundle hook */
+  generateBundle?: (options: NormalizedOutputOptions, bundle: OutputBundle) => void | Promise<void>;
+}
+</GradientCode>
 
-  /**
-   * Modules to not externalize for SSR
-   */
-  noExternal?: string | RegExp | (string | RegExp)[];
+<Callout type="note">
+Pyra plugins are compatible with Rollup plugins. Most Rollup plugins work in Pyra without modification.
+</Callout>
 
-  /**
-   * SSR target
-   * @default 'node'
-   */
-  target?: 'node' | 'webworker';
-}`}
+## Helper Types
+
+### ConfigEnv
+
+<GradientCode language="typescript">
+interface ConfigEnv {
+  /** Current command */
+  command: 'serve' | 'build';
+  
+  /** Current mode */
+  mode: string;
+}
+</GradientCode>
+
+### TransformResult
+
+<GradientCode language="typescript">
+interface TransformResult {
+  /** Transformed code */
+  code: string;
+  
+  /** Source map */
+  map?: SourceMap | null;
+  
+  /** Module side effects */
+  moduleSideEffects?: boolean | 'no-treeshake';
+}
 </GradientCode>
 
 ## Usage Example
 
-<GradientCode language="typescript" title="pyra.config.ts">
-{`import { defineConfig, UserConfig } from 'pyra';
+Complete configuration example:
+
+<GradientCode language="typescript">
+import { defineConfig } from 'pyra';
 import react from '@pyra/plugin-react';
+import path from 'path';
 
 export default defineConfig({
-  plugins: [react()],
+  root: process.cwd(),
+  base: '/',
+  publicDir: 'public',
+  cacheDir: 'node_modules/.pyra',
   
   resolve: {
     alias: {
-      '@': '/src',
-      '@components': '/src/components'
-    }
+      '@': path.resolve(__dirname, './src'),
+    },
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
   },
   
   server: {
-    port: 3000,
+    port: 5173,
     host: true,
+    open: true,
+    cors: true,
+    hmr: {
+      overlay: true,
+    },
     proxy: {
       '/api': {
-        target: 'http://localhost:4000',
-        changeOrigin: true
-      }
-    }
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
+    },
   },
   
   build: {
     outDir: 'dist',
     sourcemap: true,
+    minify: 'esbuild',
+    target: 'es2020',
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['react', 'react-dom']
-        }
-      }
-    }
-  }
-} satisfies UserConfig);`}
+          vendor: ['react', 'react-dom'],
+        },
+      },
+    },
+  },
+  
+  optimizeDeps: {
+    include: ['react', 'react-dom'],
+  },
+  
+  plugins: [react()],
+  
+  define: {
+    __APP_VERSION__: JSON.stringify('1.0.0'),
+  },
+  
+  envPrefix: 'PYRA_',
+});
 </GradientCode>
 
-<Callout type="tip">
-  Use `satisfies UserConfig` for type checking while preserving literal types.
-</Callout>
+---
 
-## Next Steps
-
-- [Plugin Types](/docs/api/plugin-types) - Plugin API types
-- [JavaScript API](/docs/api/javascript-api) - Programmatic API
-- [Configuration](/docs/configuration/overview) - Configuration guide
+For plugin development, see **[Plugin API](/docs/api/plugin-types)**.
