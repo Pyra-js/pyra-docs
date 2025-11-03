@@ -1,6 +1,7 @@
 import AnimatedBackground from "./AnimatedBackground";
-import HeroSection from "./HeroSection";
+import HeroSection from "./homepage/HeroSection";
 import FeaturesSection from "./FeaturesSection";
+import { WhyPyraSection } from "./homepage/WhyPyra";
 import Footer from "./Footer";
 
 function Home() {

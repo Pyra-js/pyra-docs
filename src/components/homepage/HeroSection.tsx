@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import PyraLogo from "./PyraLogo";
-import { Button } from "./ui/button";
+import PyraLogo from "../PyraLogo";
+import { Button } from "../ui/button";
 import { Link } from "react-router-dom";
 
 export default function HeroSection() {
