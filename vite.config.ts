@@ -2,18 +2,21 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import mdx from '@mdx-js/rollup';
 import remarkGfm from 'remark-gfm';
-import remarkFrontmatter from 'remark-frontmatter';
+import rehypePrettyCode from 'rehype-pretty-code';
 import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    { 
-      enforce: 'pre', 
-      ...mdx({
-        remarkPlugins: [remarkGfm, remarkFrontmatter],
-      }) 
-    },
+    mdx({
+      remarkPlugins: [remarkGfm],
+      rehypePlugins: [[rehypePrettyCode, {
+        theme: 'one-dark-pro',
+        keepBackground: false,
+        defaultLang: 'txt',
+      }]],
+      providerImportSource: "@mdx-js/react",
+    }),
     react(),
   ],
   resolve: {
