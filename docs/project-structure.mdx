@@ -1,19 +1,72 @@
-# Project Structure
+# 🗂️ Project Structure
 
-Understanding your Pyra.js project layout.
+Understanding your `Pyra.js` project layout.
+
+A Pyra project is designed to be simple by default but flexible enough to grow with you. This page explains the standard layout, where your files should live, and how Pyra automatically detects configuration, entry points, and outputs.
+
+When you create a new project using `pyra create my-app`, you’ll see something like this:
+
 
 ## Default Structure
 
 ```bash
 my-app/
-├── src/
-│   ├── main.tsx       # Entry point
-│   ├── App.tsx        # Root component
-│   └── index.css      # Global styles
-├── public/            # Static assets
-├── pyra.config.ts     # Configuration
-└── package.json
+├─ src/
+│  ├─ main.ts
+│  ├─ App.tsx
+│  ├─ components/
+│  └─ styles/
+├─ public/
+│  ├─ favicon.svg
+│  └─ index.html
+├─ pyra.config.ts
+├─ package.json
+├─ tsconfig.json
+└─ README.md
 ```
+
+This is a **standard starting point**, but Pyra doesn’t force any structure. You can adapt it to your framework or workflow easily. The important thing is understanding how Pyra interprets these folders.
+
+## Core Folders 
+### `/src` - The source directory
+
+This is where all your actual application code lives. By default, Pyra treats `src/main.ts` (or `src/main.js`) as your entry file, the point where your app starts. Inside `src/`, you can structure your files however you want:
+
+```bash
+src/
+├─ main.tsx            # App entry point
+├─ components/         # UI components
+├─ pages/              # Page-level routes (optional)
+├─ styles/             # Global or modular CSS
+├─ assets/             # Images, icons, fonts
+└─ utils/              # Shared helpers or libraries
+```
+
+Pyra automatically watches this folder for changes during development and rebuilds when files update. If you prefer a different source folder, you can configure it in `pyra.config.ts` using the `root` or `entry` options.
+
+### `/public` - Static assets 
+
+Everything inside `public/` is served as-is. Pyra copies these files directly to your output directory during build.
+It’s ideal for things like:
+
+```bash
+public/
+│ ├─ favicon.svg
+│ └─ index.html
+```
+This is ideal for Static HTML files, Icons, logos, manifest files, Robots.txt or sitemap.xml. You can reference these assets in code with absolute paths, like /favicon.svg.
+
+### `/dist` - Output directory 
+
+When you run `pyra build`, your production-ready files are emitted here. This includes your bundled JavaScript, optimized CSS, and copied static assets. You can customize this folder via the `outDir` option in your config:
+
+```bash
+export default defineConfig({
+  outDir: "build",
+});
+```
+
+The output is clean, minimal, and ready to deploy to services like Netlify, Vercel, Firebase, or any static host.
 
 ## Key Files
 
@@ -36,4 +89,16 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
 ### `pyra.config.ts`
 
-Your build configuration file (optional).
+This file defines how your project builds, what plugins run, where files output, and how the dev server behaves.
+
+```ts
+import { defineConfig } from "pyra";
+import react from "@pyra/plugin-react";
+
+export default defineConfig({
+  entry: "./src/main.tsx",
+  outDir: "dist",
+  plugins: [react()],
+});
+```
+Pyra automatically detects `pyra.config.ts`, `pyra.config.mjs`, or `pyra.config.js` in your project root, no extra flags required.

@@ -8,7 +8,8 @@ import {
   Rocket,
   Upload,
   HelpCircle,
-  Keyboard
+  Keyboard,
+  Folder
 } from "lucide-react";
 
 export const SIDEBAR_ITEMS = [
@@ -38,6 +39,11 @@ export const SIDEBAR_ITEMS = [
         path: "/docs/env-variables",
         label: "Environment Variables",
         icon: FileText,
+      },
+      {
+        path: "/docs/monorepo",
+        label: "Monorepos & Workspaces",
+        icon: Folder,
       },
     ],
   },

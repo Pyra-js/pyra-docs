@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { MDXProvider } from '@mdx-js/react';
 import '../../../docs/styles/docs-theme.css';
-import { Badge, GradientCode, Step, Terminal, Callout } from '../../../docs/components/DocsComponents';
+import { Badge, GradientCode, Step, Terminal, Callout } from '../docs/MDXComponents';
 
 // Import all MDX files
 const mdxModules = import.meta.glob('../../../docs/**/*.mdx', { eager: false });
 
 // Import sidebar config
-import sidebarConfig from '../../../docs/sidebar.json';
+// import sidebarConfig from '../../../docs/sidebar.json';
+
 
 interface SidebarItem {
   label: string;

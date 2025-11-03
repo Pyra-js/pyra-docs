@@ -1,36 +1,133 @@
-# Building for Production
+# 🚀 Building for Production
 
-Create optimized production builds.
+Pyra makes it effortless to go from development to production with a single command.  
 
-## Build Command
+Behind the scenes, it optimizes, minifies, and bundles your application using a highly tuned build pipeline powered by **ESBuild**, ensuring your app loads fast and runs smoothly everywhere.
+
+This page explains how production builds work, what you can customize, and how to prepare your Pyra project for deployment.
+
+## ⚙️ The Build Command
+
+When you’re ready to ship your project, run:
 
 ```bash
-npm run build
+pyra build
 ```
 
-This generates optimized assets in the `dist` folder.
+This command compiles your app, bundles dependencies, and outputs production-ready assets into your configured output directory (default: `dist/`).
 
-## Build Output
+Pyra automatically switches to production mode, enabling minification, tree-shaking, and environment optimizations. You can also specify a custom mode:
 
+```bash
+pyra build --mode staging
 ```
+
+## 🧱 Default Output Structure
+
+After building, your output folder (default: dist/) will look something like this:
+
+```bash
 dist/
-├── assets/
-│   ├── index-[hash].js
-│   └── index-[hash].css
-└── index.html
+├─ assets/
+│  ├─ index-2a93b3f7.js
+│  ├─ vendor-98ac3c1d.js
+│  ├─ styles-90fa2bcd.css
+│  └─ logo.svg
+├─ index.html
+└─ manifest.json
+```
+Everything in this folder is ready to deploy as static assets to any modern host such as Netlify, Vercel, Firebase Hosting, or Cloudflare Pages.
+
+You can customize the output directory in your `pyra.config.ts`:
+
+```ts
+export default defineConfig({
+  outDir: "build",
+});
 ```
 
-## Preview Build
 
-Test your production build locally:
+## 🌐 Environment Variables in Production
+
+Pyra supports environment modes `.env`, `.env.local`, `.env.build`, `.env.staging`, etc. When you build, it automatically loads the file that matches your mode:
 
 ```bash
-npm run preview
+# Example .env.build
+PYRA_API_URL=https://api.myapp.com
 ```
 
-## Optimization Tips
+in your code: 
 
-- Enable minification in config
-- Use code splitting for large apps
-- Optimize images and assets
-- Enable gzip compression on your server
+```ts
+const api = import.meta.env.PYRA_API_URL;
+```
+
+By default, only variables prefixed with `PYRA_` or `PUBLIC_` are exposed to the client.
+
+You can configure this in your config file:
+
+```ts
+export default defineConfig({
+  envPrefix: ["PYRA_", "PUBLIC_"],
+});
+```
+This keeps secrets secure while still allowing necessary values to be injected during build.
+
+## 🧩 Build Configuration Options  
+
+You can fine-tune the build process in your `pyra.config.ts` file:
+
+```ts
+import { defineConfig } from "pyra";
+
+export default defineConfig({
+  entry: "./src/main.tsx",
+  outDir: "dist",
+  target: "es2020",
+  minify: "esbuild",       // "esbuild" | "terser" | false
+  sourcemap: true,         // or "inline"
+  splitting: true,         // enable code-splitting
+  clean: true,             // clear output folder before build
+  formats: ["esm", "cjs"], // for libraries
+});
+```
+
+| Option | Description |
+|------|-------------|
+| `entry` | Main entry point for your app. |
+| `outDir` | Output directory for build files. |
+| `target` | ECMAScript target for compatibility. |
+| `minify` | Choose `esbuild` or `terser`. |
+| `sourcemap` | Generates source maps for debugging. |
+| `splitting` | Enables code-splitting for dynamic imports. |
+| `clean` | Clears output directory before building. |
+| `formats` | Define output formats for libraries. |
+
+
+## 🧰 Building Libraries
+
+If you’re building a reusable package (like a UI library or plugin), Pyra can output multiple module formats:
+
+```ts
+export default defineConfig({
+  entry: "./src/index.ts",
+  outDir: "dist",
+  formats: ["esm", "cjs"],
+  external: ["react", "react-dom"],
+});
+```
+
+This set up generates:
+
+```bash
+dist/
+├─ index.js        (ESM)
+├─ index.cjs       (CommonJS)
+└─ index.d.ts      (Types)
+```
+
+Mark large peer dependencies like React or Vue as external so they aren’t bundled.
+
+Pyra’s build pipeline is optimized for speed, clarity, and control, exactly what it was designed for.
+
+With a single command, you get modern, production-ready output, cleanly structured assets, and reliable performance out of the box.
