@@ -1,0 +1,40 @@
+---
+title: Deployment
+category: Guides
+order: 2
+---
+
+# Deployment
+
+Deploy your Pyra.js app to production.
+
+## Vercel
+
+```bash
+npm install -g vercel
+vercel
+```
+
+## Netlify
+
+```bash
+npm install -g netlify-cli
+netlify deploy --prod
+```
+
+## Static Hosting
+
+Build your app and upload the `dist` folder to any static host:
+
+- GitHub Pages
+- Cloudflare Pages
+- AWS S3
+- Firebase Hosting
+
+## Build Settings
+
+Most platforms need these settings:
+
+- **Build command:** `npm run build`
+- **Output directory:** `dist`
+- **Node version:** 18+

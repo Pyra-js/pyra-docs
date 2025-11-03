@@ -1,0 +1,58 @@
+---
+title: Configuration
+category: Configuration
+order: 1
+---
+
+# Configuration
+
+Customize Pyra.js to fit your project needs.
+
+## Config File
+
+Create a `pyra.config.ts` file in your project root:
+
+```typescript
+import { defineConfig } from 'pyra';
+
+export default defineConfig({
+  plugins: [],
+  build: {
+    outDir: 'dist',
+    minify: true,
+  },
+  server: {
+    port: 3000,
+    open: true,
+  },
+});
+```
+
+## Build Options
+
+### `outDir`
+Output directory for production builds.
+- Type: `string`
+- Default: `'dist'`
+
+### `minify`
+Enable code minification.
+- Type: `boolean`
+- Default: `true`
+
+### `sourcemap`
+Generate source maps.
+- Type: `boolean`
+- Default: `false`
+
+## Server Options
+
+### `port`
+Development server port.
+- Type: `number`
+- Default: `3000`
+
+### `open`
+Auto-open browser on server start.
+- Type: `boolean`
+- Default: `false`

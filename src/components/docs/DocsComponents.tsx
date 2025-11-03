@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Copy, Check } from "lucide-react";
 import { useState } from "react";
+export { Callout } from '../../../docs/components/DocsComponents';
 
 interface CodeBlockProps {
   code: string;

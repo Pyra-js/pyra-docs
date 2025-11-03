@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
+import { MDXProvider } from '@mdx-js/react';
 import '../../../docs/styles/docs-theme.css';
+import { Badge, GradientCode, Step, Terminal, Callout } from '../../../docs/components/DocsComponents';
 
 // Import all MDX files
 const mdxModules = import.meta.glob('../../../docs/**/*.mdx', { eager: false });
@@ -13,6 +15,14 @@ interface SidebarItem {
   path?: string;
   items?: SidebarItem[];
 }
+
+const mdxComponents = {
+  Badge,
+  GradientCode,
+  Step,
+  Terminal,
+  Callout,
+};
 
 export default function DocsPage() {
   const location = useLocation();
@@ -88,9 +98,11 @@ export default function DocsPage() {
           {loading ? (
             <div className="text-gray-400">Loading...</div>
           ) : MDXContent ? (
-            <div className="prose prose-invert max-w-none">
-              <MDXContent />
-            </div>
+            <MDXProvider components={mdxComponents}>
+              <div className="prose prose-invert max-w-none">
+                <MDXContent />
+              </div>
+            </MDXProvider>
           ) : (
             <div>
               <h1>Page Not Found</h1>

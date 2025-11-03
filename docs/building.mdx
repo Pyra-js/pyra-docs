@@ -1,0 +1,42 @@
+---
+title: Building for Production
+category: Guides
+order: 1
+---
+
+# Building for Production
+
+Create optimized production builds.
+
+## Build Command
+
+```bash
+npm run build
+```
+
+This generates optimized assets in the `dist` folder.
+
+## Build Output
+
+```
+dist/
+├── assets/
+│   ├── index-[hash].js
+│   └── index-[hash].css
+└── index.html
+```
+
+## Preview Build
+
+Test your production build locally:
+
+```bash
+npm run preview
+```
+
+## Optimization Tips
+
+- Enable minification in config
+- Use code splitting for large apps
+- Optimize images and assets
+- Enable gzip compression on your server

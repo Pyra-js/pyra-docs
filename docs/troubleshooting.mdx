@@ -1,0 +1,50 @@
+---
+title: Troubleshooting
+category: Guides
+order: 3
+---
+
+# Troubleshooting
+
+Common issues and solutions.
+
+## Port Already in Use
+
+If port 3000 is taken, specify a different port:
+
+```typescript
+export default defineConfig({
+  server: {
+    port: 3001,
+  },
+});
+```
+
+## Module Not Found
+
+Clear cache and reinstall:
+
+```bash
+rm -rf node_modules
+npm install
+```
+
+## Build Fails
+
+Check for:
+- TypeScript errors
+- Missing dependencies
+- Incorrect import paths
+
+## Slow Build Times
+
+- Enable caching in config
+- Reduce bundle size
+- Use code splitting
+- Update to latest Pyra.js version
+
+## Getting Help
+
+- [GitHub Issues](https://github.com/pyra/pyra)
+- [Discord Community](https://discord.gg/pyra)
+- [Stack Overflow](https://stackoverflow.com/questions/tagged/pyra)

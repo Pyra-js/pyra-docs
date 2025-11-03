@@ -1,0 +1,41 @@
+---
+title: Environment Variables
+category: Configuration
+order: 3
+---
+
+# Environment Variables
+
+Manage environment-specific configuration.
+
+## Using .env Files
+
+Create a `.env` file in your project root:
+
+```bash
+VITE_API_URL=https://api.example.com
+VITE_API_KEY=your-key-here
+```
+
+## Accessing Variables
+
+```typescript
+const apiUrl = import.meta.env.VITE_API_URL;
+const apiKey = import.meta.env.VITE_API_KEY;
+```
+
+## Important Notes
+
+- Only variables prefixed with `VITE_` are exposed to client code
+- Never commit `.env` files with sensitive data
+- Use `.env.local` for local overrides
+
+## Environment Modes
+
+```bash
+# Development
+npm run dev
+
+# Production
+npm run build
+```

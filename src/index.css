@@ -86,3 +86,52 @@
       background-position: 0% 50%;
     }
   }
+
+  /* Custom MDX Prose Styles */
+  .prose-docs {
+    @apply text-gray-300;
+  }
+
+  .prose-docs h1 {
+    @apply text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-amber-400 via-rose-500 to-violet-600 bg-clip-text text-transparent leading-tight;
+  }
+
+  .prose-docs h2 {
+    @apply text-2xl md:text-3xl font-bold text-gray-100 mt-12 mb-4 pb-2 border-b border-gray-800;
+  }
+
+  .prose-docs h3 {
+    @apply text-xl md:text-2xl font-semibold text-gray-200 mt-8 mb-3;
+  }
+
+  .prose-docs p {
+    @apply text-base md:text-lg leading-relaxed mb-4 text-gray-400;
+  }
+
+  .prose-docs ul {
+    @apply space-y-2 my-6 ml-6;
+  }
+
+  .prose-docs li {
+    @apply text-gray-400 leading-relaxed;
+  }
+
+  .prose-docs strong {
+    @apply text-gray-200 font-semibold;
+  }
+
+  .prose-docs code {
+    @apply text-amber-400 bg-gray-900/50 px-1.5 py-0.5 rounded text-sm font-mono;
+  }
+
+  .prose-docs pre {
+    @apply my-6 rounded-lg overflow-hidden;
+  }
+
+  .prose-docs pre code {
+    @apply bg-transparent px-0 py-0;
+  }
+
+  .prose-docs a {
+    @apply text-violet-400 hover:text-violet-300 underline decoration-violet-500/30 hover:decoration-violet-400 transition-colors;
+  }

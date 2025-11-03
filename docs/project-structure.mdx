@@ -1,0 +1,45 @@
+---
+title: Project Structure
+category: Getting Started
+order: 3
+---
+
+# Project Structure
+
+Understanding your Pyra.js project layout.
+
+## Default Structure
+
+```
+my-app/
+├── src/
+│   ├── main.tsx       # Entry point
+│   ├── App.tsx        # Root component
+│   └── index.css      # Global styles
+├── public/            # Static assets
+├── pyra.config.ts     # Configuration
+└── package.json
+```
+
+## Key Files
+
+### `src/main.tsx`
+
+The entry point of your application:
+
+```typescript
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import './index.css';
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+```
+
+### `pyra.config.ts`
+
+Your build configuration file (optional).

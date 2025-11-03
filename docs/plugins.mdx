@@ -1,0 +1,53 @@
+---
+title: Plugins
+category: Configuration
+order: 2
+---
+
+# Plugins
+
+Extend Pyra.js with plugins.
+
+## Official Plugins
+
+### React Plugin
+
+```bash
+npm install @pyra/plugin-react
+```
+
+```typescript
+import react from '@pyra/plugin-react';
+
+export default defineConfig({
+  plugins: [react()],
+});
+```
+
+### Vue Plugin
+
+```bash
+npm install @pyra/plugin-vue
+```
+
+```typescript
+import vue from '@pyra/plugin-vue';
+
+export default defineConfig({
+  plugins: [vue()],
+});
+```
+
+## Creating Custom Plugins
+
+```typescript
+export function myPlugin() {
+  return {
+    name: 'my-plugin',
+    transform(code, id) {
+      // Transform code here
+      return code;
+    },
+  };
+}
+```
