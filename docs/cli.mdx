@@ -39,6 +39,37 @@ Every command accepts a common set of flags that control core behavior. CLI flag
 
 The `--mode` flag is especially useful in CI or scripted builds where you want to toggle certain options at build time (for example, enabling source maps or switching targets).
 
+## Pyra init
+
+The `init` command gives you a template-based set up. To get started, run:
+
+```bash
+pyra init
+```
+
+This command will guide you through an interactive setup process:
+
+* **Project name** | specify what to call your project
+
+* **Template** | choose between Vanilla or React (more coming soon)
+
+* **Language** | select TypeScript or JavaScript
+
+Once complete, Pyra will generate a fully configured project with all the right dependencies, boilerplate, and starter code, ready for development or production.
+
+You can also skip the prompts by using flags:
+
+```bash
+--template   # Choose the framework (e.g., react or vanilla)
+--language   # Choose the language (ts or js)
+```
+
+Example: 
+
+```bash
+pyra init my-app --template react --language ts
+```
+
 ## Pyra create
 
 The `create` workflow scaffolds a new project in seconds. It asks a few lightweight questions, installs dependencies if you want it to, and writes a starter `pyra.config.ts` so you can run immediately.
@@ -83,15 +114,6 @@ pyra preview
 pyra preview --port 5050 --strict
 ```
 Use this before deploying to catch routing or asset path issues that don’t appear in the dev server.
-
-## Pyra init
-
-Run `init` in an existing project to generate a minimal `pyra.config.ts` file and optionally detect aliases and environment prefixes. It’s a safe operation that won’t overwrite existing files unless you ask it to.
-
-```bash
-pyra init
-pyra init --yes
-```
 
 ## pyra inspect
 
