@@ -62,6 +62,7 @@ You can also skip the prompts by using flags:
 ```bash
 --template   # Choose the framework (e.g., react or vanilla)
 --language   # Choose the language (ts or js)
+--pm         # Choose the package manager (npm, pnpm, yarn)
 ```
 
 Example: 
@@ -72,14 +73,31 @@ pyra init my-app --template react --language ts
 
 ## Pyra create
 
-The `create` workflow scaffolds a new project in seconds. It asks a few lightweight questions, installs dependencies if you want it to, and writes a starter `pyra.config.ts` so you can run immediately.
+The `create` command can quickly scaffold a new Pyra project in seconds. 
 
 ```bash
+pyra create
+# or
 pyra create my-app
-pyra create my-lib --template library --no-install
 ```
+This command will:
+
+* Prompt only for a project name (if not provided)
+* Generates a minimal project structure programmatically
+* Automatically detects your package manager (or specify manually with --pm)
+* Installs dependencies automatically (use --skip-install to skip)
+
+This command is perfect for quick prototyping, minimal setups, or when you just want to get started fast.
+
+Pyra will create a lightweight project with a simple package.json` containing Pyra dependencies, a clean and minimal file structure, and zero framework boilerplate
+
+Use `pyra create` when you want full control, start small, then build your project your way.
 
 Use `--template` to choose between app and library starters, or pass a custom starter name if you’ve published one.
+
+```bash
+pyra create my-lib --template library --no-install
+```
 
 ## Pyra dev
 

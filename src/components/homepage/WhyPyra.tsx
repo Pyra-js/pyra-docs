@@ -6,7 +6,7 @@ const reasons = [
     icon: <Gauge className="w-8 h-8" />,
     title: "Native Performance",
     description:
-      "Built with Rust for unmatched speed. Compile times 10-100x faster than traditional bundlers.",
+      "Written in TypeScript and optimized for performance, Pyra.js compiles your project 10–100× faster than most traditional build tools.",
   },
   {
     icon: <Code2 className="w-8 h-8" />,

@@ -64,7 +64,7 @@ export const QuickStartSection = () => {
           transition={{ duration: 0.6, delay: 0.4 }}
         >
           <p className="text-gray-500 text-sm">
-            Works with React, Vue, Svelte, and more
+            Works with React only. Vue, Svelte, and more coming soon
           </p>
         </motion.div>
       </div>
