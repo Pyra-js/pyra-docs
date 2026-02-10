@@ -33,7 +33,7 @@ export default function HeroSection() {
           transition={{ duration: 0.8, delay: 0.5 }}
         >
           <span className="bg-gradient-to-r from-amber-400 via-rose-500 to-violet-600 bg-clip-text text-transparent">
-            Ignite your frontend.
+            Ignite your Web Stack.
           </span>
         </motion.h2>
 
