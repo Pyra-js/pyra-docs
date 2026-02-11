@@ -104,10 +104,18 @@ pyra create my-lib --template library --no-install
 The `dev` command launches the development server with hot module replacement, fast transforms, and clear diagnostics. It watches the file system for changes and updates your browser almost instantly.
 
 ```bash
-pyra dev
-pyra dev --port 5173 --host --open
-pyra dev --root ./examples/basic
+pyra dev [options]
 ```
+
+### options
+
+| options | Description |
+|------|-------------|
+| `-p, --port <number>` | The port to run dev server on |
+| `-o, --open` | Open browser on server start |
+| `-c, --config <path>` | Path to config file |
+| `--mode <mode>` | Build mode (development|production)", "development |
+| `--verbose` | Show verbose output (config loading, etc.) |
 
 Useful flags include `--host` for LAN testing, `--open` to launch your browser, `--https` for local TLS (honoring server.https in config), and `--port` to avoid conflicts.
 

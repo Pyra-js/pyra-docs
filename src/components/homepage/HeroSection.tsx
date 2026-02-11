@@ -43,7 +43,9 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.7 }}
         >
-          A blazing-fast TypeScript-first build tool that transforms your development workflow
+          A next-generation full-stack framework built around an app-first SSR runtime and a fully traceable request pipeline.
+          <br />
+          <strong>Fast, Simple, Full-stack</strong>
         </motion.p>
 
         <motion.div
