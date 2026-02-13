@@ -55,6 +55,16 @@ export const SIDEBAR_ITEMS = [
     ],
   },
   {
+    category: "Features",
+    items: [
+      {
+        path: "/docs/file-based-routing",
+        label: "File-Based Routing",
+        icon: Route,
+      },
+    ],
+  },
+  {
     category: "Guides",
     items: [
       {
