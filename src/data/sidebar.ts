@@ -10,7 +10,8 @@ import {
   HelpCircle,
   Keyboard,
   Folder,
-  TypeIcon
+  TypeIcon,
+  Route
 } from "lucide-react";
 
 export const SIDEBAR_ITEMS = [

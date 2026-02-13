@@ -1,0 +1,228 @@
+# 📁 File-Based Routing
+
+Automatically generate routes from your file system.
+
+**File-based routing** lets you define your application's routes by simply creating files and folders inside a designated directory. Instead of manually wiring up every route in a configuration file, Pyra reads your file tree and maps it directly to URL paths — no extra setup required.
+
+---
+
+## ⚡ How It Works
+
+When file-based routing is enabled, Pyra scans a target directory (by default `src/pages/`) and converts every file it finds into a corresponding route. The folder structure becomes the URL structure:
+
+```bash
+src/pages/
+├─ index.tsx          →  /
+├─ about.tsx          →  /about
+├─ blog/
+│  ├─ index.tsx       →  /blog
+│  └─ [slug].tsx      →  /blog/:slug
+├─ docs/
+│  ├─ index.tsx       →  /docs
+│  └─ [...all].tsx    →  /docs/*
+└─ settings/
+   └─ profile.tsx     →  /settings/profile
+```
+
+There's no router config to maintain. Add a file, get a route. Delete a file, the route disappears.
+
+---
+
+## 🔧 Enabling File-Based Routing
+
+Enable the feature in your `pyra.config.ts`:
+
+```ts
+import { defineConfig } from "pyra";
+import react from "@pyra/plugin-react";
+
+export default defineConfig({
+  plugins: [react()],
+  routing: {
+    mode: "file",       // enable file-based routing
+    dir: "src/pages",   // directory to scan (default)
+  },
+});
+```
+
+Once enabled, Pyra automatically generates a route manifest at build time and during development. The dev server picks up new files instantly via HMR — no restart needed.
+
+---
+
+## 📄 Route Conventions
+
+### Basic Routes
+
+Every `.tsx`, `.ts`, `.jsx`, or `.js` file inside the pages directory becomes a route. The file name maps directly to the URL segment:
+
+| File | Route |
+|------|-------|
+| `src/pages/index.tsx` | `/` |
+| `src/pages/about.tsx` | `/about` |
+| `src/pages/contact.tsx` | `/contact` |
+
+### Nested Routes
+
+Folders create nested URL segments. Use an `index` file inside a folder to define the default route for that path:
+
+```bash
+src/pages/
+├─ dashboard/
+│  ├─ index.tsx        →  /dashboard
+│  ├─ analytics.tsx    →  /dashboard/analytics
+│  └─ settings.tsx     →  /dashboard/settings
+```
+
+### Dynamic Routes
+
+Wrap a file or folder name in square brackets to create a dynamic segment. The bracket content becomes the parameter name:
+
+```bash
+src/pages/
+├─ users/
+│  ├─ index.tsx        →  /users
+│  └─ [id].tsx         →  /users/:id
+├─ blog/
+│  └─ [slug].tsx       →  /blog/:slug
+```
+
+Access the parameter inside your component:
+
+```tsx
+import { useParams } from "pyra/router";
+
+export default function UserPage() {
+  const { id } = useParams();
+  return <h1>User {id}</h1>;
+}
+```
+
+### Catch-All Routes
+
+Use the spread syntax `[...param]` to match any number of nested segments. This is useful for documentation pages, wildcard paths, or custom 404 handling:
+
+```bash
+src/pages/
+├─ docs/
+│  └─ [...path].tsx    →  /docs/*
+```
+
+```tsx
+import { useParams } from "pyra/router";
+
+export default function DocsPage() {
+  const { path } = useParams(); // e.g. "getting-started/installation"
+  return <article>{/* render based on path */}</article>;
+}
+```
+
+### 404 / Not Found
+
+Create a special `_404.tsx` file at the root of your pages directory to handle unmatched routes:
+
+```bash
+src/pages/
+├─ _404.tsx            →  fallback for unmatched routes
+```
+
+---
+
+## 🗂️ Layouts
+
+Pyra supports shared layouts through `_layout.tsx` files. A layout wraps all sibling and nested routes in the same directory:
+
+```bash
+src/pages/
+├─ _layout.tsx         →  root layout (wraps everything)
+├─ index.tsx
+├─ dashboard/
+│  ├─ _layout.tsx      →  dashboard layout (wraps dashboard routes)
+│  ├─ index.tsx
+│  └─ settings.tsx
+```
+
+A layout component receives its child route via the `children` prop:
+
+```tsx
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div>
+      <nav>{/* dashboard navigation */}</nav>
+      <main>{children}</main>
+    </div>
+  );
+}
+```
+
+Layouts nest automatically — the dashboard layout is rendered inside the root layout.
+
+---
+
+## 🚫 Excluding Files
+
+Not every file in your pages directory should become a route. Pyra ignores files that match these patterns by default:
+
+- Files starting with `_` (except `_layout.tsx` and `_404.tsx`)
+- Files inside `__tests__/` directories
+- Files ending with `.test.tsx`, `.spec.tsx`, or `.d.ts`
+- Files named `components.tsx` or `utils.ts`
+
+You can customize exclusions in your config:
+
+```ts
+export default defineConfig({
+  routing: {
+    mode: "file",
+    exclude: ["**/helpers/**", "**/*.internal.*"],
+  },
+});
+```
+
+---
+
+## ⚙️ Configuration Options
+
+The full set of routing options:
+
+```ts
+export default defineConfig({
+  routing: {
+    mode: "file",              // "file" | "manual" (default: "manual")
+    dir: "src/pages",          // pages directory (default: "src/pages")
+    extensions: [".tsx", ".ts", ".jsx", ".js"],  // file types to include
+    exclude: [],               // additional glob patterns to ignore
+    trailingSlash: false,      // enforce or strip trailing slashes
+    caseSensitive: false,      // case-sensitive route matching
+  },
+});
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `mode` | `"file" \| "manual"` | `"manual"` | Enable file-based or manual routing |
+| `dir` | `string` | `"src/pages"` | Directory to scan for route files |
+| `extensions` | `string[]` | `[".tsx", ".ts", ".jsx", ".js"]` | File extensions to include |
+| `exclude` | `string[]` | `[]` | Glob patterns to exclude from routing |
+| `trailingSlash` | `boolean` | `false` | Append trailing slashes to routes |
+| `caseSensitive` | `boolean` | `false` | Enable case-sensitive matching |
+
+---
+
+## 🧠 Route Manifest
+
+During development and at build time, Pyra generates a `.pyra/routes.json` manifest file containing every discovered route, its parameters, and the associated component file. You can inspect this manifest for debugging:
+
+```bash
+pyra inspect --routes
+```
+
+This outputs the resolved route table so you can verify that your file structure maps correctly to URLs.
+
+---
+
+## 💡 Tips
+
+- **Keep it flat when possible.** Deep nesting creates long URLs. Use dynamic segments to keep paths short and meaningful.
+- **Use layouts for shared chrome.** Navigation bars, sidebars, and footers belong in `_layout.tsx`, not duplicated across pages.
+- **Combine with manual routes.** File-based routing doesn't have to own every route. You can mix it with manual route definitions for edge cases by keeping `mode: "file"` and adding a `routes` array in your config for custom entries.
+- **Name files descriptively.** The file name is the URL — `pricing.tsx` is clearer than `p.tsx` for both developers and users.
