@@ -13,6 +13,7 @@ import DocsLayout from "../components/docs/DocsLayout";
 import DocsIndex from "../../docs/introduction.mdx";
 import TypeScript from "../../docs/typescript.mdx";
 import FileBasedRouting from "../../docs/file-based-routing.mdx";
+import Middleware from "../../docs/middleware.mdx";
 import { Route, Routes } from "react-router";
 import Home from "@/components/home";
 
@@ -122,6 +123,14 @@ function DocRoutes() {
         element={
           <DocsLayout>
             <FileBasedRouting />
+          </DocsLayout>
+        }
+      />
+      <Route
+        path="/docs/middleware"
+        element={
+          <DocsLayout>
+            <Middleware />
           </DocsLayout>
         }
       />

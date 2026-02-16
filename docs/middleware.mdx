@@ -10,11 +10,11 @@ Think of middleware as checkpoints a request passes through before it reaches yo
 
 Common uses for middleware:
 
-- **Authentication** — check if the user is logged in before showing a page
-- **Logging** — record every request for debugging
-- **Redirects** — send users to a different URL
-- **Rate limiting** — block users making too many requests
-- **CORS** — add headers that allow cross-origin requests
+- **Authentication** | check if the user is logged in before showing a page
+- **Logging** | record every request for debugging
+- **Redirects** | send users to a different URL
+- **Rate limiting** | block users making too many requests
+- **CORS** | add headers that allow cross-origin requests
 
 Without middleware, you'd have to copy the same checks into every route handler. Middleware lets you write it once and apply it to a whole section of your app.
 
@@ -43,12 +43,12 @@ export default myMiddleware;
 ```
 
 Two parameters:
-- `context` — information about the current request (URL, headers, cookies, params, etc.)
-- `next` — a function you call to pass the request to the next middleware or the route handler
+- `context` - information about the current request (URL, headers, cookies, params, etc.)
+- `next` - a function you call to pass the request to the next middleware or the route handler
 
 Two choices:
-- **Call `next()`** — the request continues down the chain
-- **Return a Response without calling `next()`** — the request stops here (this is called short-circuiting)
+- **Call `next()`** - the request continues down the chain
+- **Return a Response without calling `next()`** - the request stops here (this is called short-circuiting)
 
 ---
 
@@ -69,11 +69,11 @@ src/routes/
 
 A request to `/dashboard/settings` passes through:
 
-1. `src/routes/middleware.ts` (root middleware)
-2. `src/routes/dashboard/middleware.ts` (dashboard middleware)
-3. The settings page handler
+* `src/routes/middleware.ts` (root middleware)
+* `src/routes/dashboard/middleware.ts` (dashboard middleware)
+* The settings page handler
 
-Each middleware calls `next()` to pass the request to the next one in line. If any middleware returns a response without calling `next()`, the chain stops — no subsequent middleware or route handler runs.
+Each middleware calls `next()` to pass the request to the next one in line. If any middleware returns a response without calling `next()`, the chain stops, no subsequent middleware or route handler runs.
 
 ---
 
@@ -228,13 +228,13 @@ The directory where you place `middleware.ts` determines its scope:
 | `src/routes/dashboard/middleware.ts` | All dashboard pages and sub-routes |
 | `src/routes/dashboard/settings/middleware.ts` | Only `/dashboard/settings` and deeper |
 
-Middleware in a parent directory always runs before middleware in a child directory. You can't change the order — it's determined by the directory structure.
+Middleware in a parent directory always runs before middleware in a child directory. You can't change the order, it's determined by the directory structure.
 
 ---
 
 ## Middleware Applies to Both Pages and APIs
 
-Unlike layouts (which only wrap pages), middleware runs for both page routes (`page.tsx`) and API routes (`route.ts`). If you put a middleware in `src/routes/middleware.ts`, it intercepts every request — pages, API calls, everything in that directory tree.
+Unlike layouts (which only wrap pages), middleware runs for both page routes (`page.tsx`) and API routes (`route.ts`). If you put a middleware in `src/routes/middleware.ts`, it intercepts every request, pages, API calls, everything in that directory tree.
 
 ---
 
@@ -263,7 +263,11 @@ const syncMw: Middleware = (context, next) => {
 ## Tips
 
 - **Keep each middleware focused on one thing.** A logging middleware should just log. An auth middleware should just check auth. Don't combine unrelated concerns.
-- **Put auth middleware where it's needed.** If only `/dashboard` needs authentication, put the middleware in `src/routes/dashboard/middleware.ts` — not in the root where it would slow down every request.
+
+- **Put auth middleware where it's needed.** If only `/dashboard` needs authentication, put the middleware in `src/routes/dashboard/middleware.ts`, not in the root where it would slow down every request.
+
 - **You can modify the response.** Since `next()` returns the downstream Response, you can add headers, change the status, or transform the body before returning it.
-- **Order is automatic.** You don't configure middleware order — the directory structure determines it. Root runs first, then each child directory in order.
+
+- **Order is automatic.** You don't configure middleware order, the directory structure determines it. Root runs first, then each child directory in order.
+
 - **Middleware runs on every request to its scope.** If your middleware does expensive work (like a database call), make sure it's scoped narrowly enough that it only runs where needed.
