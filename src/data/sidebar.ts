@@ -11,7 +11,8 @@ import {
   Keyboard,
   Folder,
   TypeIcon,
-  Route
+  Route,
+  Shield
 } from "lucide-react";
 
 export const SIDEBAR_ITEMS = [
@@ -61,6 +62,11 @@ export const SIDEBAR_ITEMS = [
         path: "/docs/file-based-routing",
         label: "File-Based Routing",
         icon: Route,
+      },
+      {
+        path: "/docs/middleware",
+        label: "Middleware",
+        icon: Shield,
       },
     ],
   },
