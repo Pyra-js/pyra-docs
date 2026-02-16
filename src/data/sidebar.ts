@@ -13,7 +13,8 @@ import {
   TypeIcon,
   Route,
   Shield,
-  ScanSearch
+  ScanSearch,
+  Server
 } from "lucide-react";
 
 export const SIDEBAR_ITEMS = [
@@ -73,6 +74,11 @@ export const SIDEBAR_ITEMS = [
         path: "/docs/request-tracing",
         label: "Request Tracing",
         icon: ScanSearch,
+      },
+      {
+        path: "/docs/ssr",
+        label: "SSR & Data Loading",
+        icon: Server,
       },
     ],
   },

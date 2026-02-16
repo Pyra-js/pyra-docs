@@ -15,6 +15,7 @@ import TypeScript from "../../docs/typescript.mdx";
 import FileBasedRouting from "../../docs/file-based-routing.mdx";
 import Middleware from "../../docs/middleware.mdx";
 import RequestTracing from "../../docs/request-tracing.mdx";
+import SSR from "../../docs/SSR.mdx";
 import { Route, Routes } from "react-router";
 import Home from "@/components/home";
 
@@ -140,6 +141,14 @@ function DocRoutes() {
         element={
           <DocsLayout>
             <RequestTracing />
+          </DocsLayout>
+        }
+      />
+      <Route
+        path="/docs/ssr"
+        element={
+          <DocsLayout>
+            <SSR />
           </DocsLayout>
         }
       />
