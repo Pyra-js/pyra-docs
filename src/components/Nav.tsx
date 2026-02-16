@@ -28,8 +28,8 @@ export default function Navbar() {
             <a href="#features" className="text-gray-300 hover:text-white transition-colors">
               Features
             </a>
-            <a href="#why-pyra" className="text-gray-300 hover:text-white transition-colors">
-              Why Pyra
+            <a href="#principles" className="text-gray-300 hover:text-white transition-colors">
+              Principles
             </a>
             <a href="https://github.com/Simpleboi/Pyra" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors">
               <Github className="w-5 h-5" />
@@ -70,12 +70,12 @@ export default function Navbar() {
             >
               Features
             </a>
-            <a 
-              href="#why-pyra" 
+            <a
+              href="#principles"
               className="block text-gray-300 hover:text-white transition-colors pb-4"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Why Pyra
+              Principles
             </a>
             <Link to="/docs" onClick={() => setMobileMenuOpen(false)}>
               <Button 

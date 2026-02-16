@@ -1,8 +1,12 @@
 import AnimatedBackground from "./AnimatedBackground";
 import HeroSection from "./homepage/HeroSection";
-import FeaturesSection from "./FeaturesSection";
-import { WhyPyraSection } from "./homepage/WhyPyra";
-import { QuickStartSection } from "./homepage/GetStarted";
+import FeaturesSection from "./homepage/FeaturesSection";
+import PrinciplesSection from "./homepage/PrinciplesSection";
+import DevExperienceSection from "./homepage/DevExperienceSection";
+import ObservabilitySection from "./homepage/ObservabilitySection";
+import RoutingRenderingSection from "./homepage/RoutingRenderingSection";
+import ArchitectureSection from "./homepage/ArchitectureSection";
+import { FinalCTASection } from "./homepage/GetStarted";
 import CreatorSection from "./homepage/PyraTeam";
 import Navbar from "./Nav";
 import Footer from "./Footer";
@@ -15,9 +19,13 @@ function Home() {
 
       <div className="relative z-10">
         <HeroSection />
-        <WhyPyraSection />
-        <QuickStartSection />
         <FeaturesSection />
+        <PrinciplesSection />
+        <DevExperienceSection />
+        <ObservabilitySection />
+        <RoutingRenderingSection />
+        <ArchitectureSection />
+        <FinalCTASection />
         <CreatorSection />
         <Footer />
       </div>
