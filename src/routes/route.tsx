@@ -14,6 +14,7 @@ import DocsIndex from "../../docs/introduction.mdx";
 import TypeScript from "../../docs/typescript.mdx";
 import FileBasedRouting from "../../docs/file-based-routing.mdx";
 import Middleware from "../../docs/middleware.mdx";
+import RequestTracing from "../../docs/request-tracing.mdx";
 import { Route, Routes } from "react-router";
 import Home from "@/components/home";
 
@@ -131,6 +132,14 @@ function DocRoutes() {
         element={
           <DocsLayout>
             <Middleware />
+          </DocsLayout>
+        }
+      />
+      <Route
+        path="/docs/request-tracing"
+        element={
+          <DocsLayout>
+            <RequestTracing />
           </DocsLayout>
         }
       />

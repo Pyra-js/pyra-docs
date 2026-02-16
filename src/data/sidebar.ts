@@ -12,7 +12,8 @@ import {
   Folder,
   TypeIcon,
   Route,
-  Shield
+  Shield,
+  ScanSearch
 } from "lucide-react";
 
 export const SIDEBAR_ITEMS = [
@@ -67,6 +68,11 @@ export const SIDEBAR_ITEMS = [
         path: "/docs/middleware",
         label: "Middleware",
         icon: Shield,
+      },
+      {
+        path: "/docs/request-tracing",
+        label: "Request Tracing",
+        icon: ScanSearch,
       },
     ],
   },
