@@ -14,7 +14,8 @@ import {
   Route,
   Shield,
   ScanSearch,
-  Server
+  Server,
+  Cable
 } from "lucide-react";
 
 export const SIDEBAR_ITEMS = [
@@ -79,6 +80,11 @@ export const SIDEBAR_ITEMS = [
         path: "/docs/ssr",
         label: "SSR & Data Loading",
         icon: Server,
+      },
+      {
+        path: "/docs/adapters",
+        label: "Adapters",
+        icon: Cable,
       },
     ],
   },
