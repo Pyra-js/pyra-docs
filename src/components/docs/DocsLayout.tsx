@@ -48,14 +48,15 @@ export default function DocsLayout({ children }: DocsLayoutProps) {
 
         {/* Sidebar */}
         <aside className={`
-          fixed lg:sticky top-16 left-0 h-[calc(100vh-4rem)] lg:h-auto
+          sidebar-scroll
+          fixed lg:sticky top-16 left-0 h-[calc(100vh-4rem)]
           w-64 flex-shrink-0 bg-[#0E0E12] lg:bg-transparent
           z-40 lg:z-0 transition-transform duration-300
           ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-          overflow-y-auto lg:overflow-visible
+          overflow-y-auto
           border-r border-gray-800 lg:border-0
         `}>
-          <nav className="sticky top-24 space-y-6 p-4 lg:p-0">
+          <nav className="space-y-6 p-4 lg:p-0 lg:py-2">
             {SIDEBAR_ITEMS.map((section) => (
               <div key={section.category}>
                 <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-4">
