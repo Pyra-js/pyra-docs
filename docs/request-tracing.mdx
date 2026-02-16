@@ -8,7 +8,7 @@ See exactly where time is spent on every request.
 
 Most web frameworks are black boxes. When a page loads slowly, you're left guessing: was it the database query? The HTML rendering? Some middleware you forgot about? You end up sprinkling `console.log` timers everywhere trying to narrow it down.
 
-Pyra takes a different approach. Every request that hits your server gets a detailed receipt — a breakdown of exactly where time was spent. You can see which route matched, which middleware ran, how long your data loading took, how long rendering took, and how long it took to inject assets into the final HTML.
+Pyra takes a different approach. Every request that hits your server gets a detailed receipt, a breakdown of exactly where time was spent. You can see which route matched, which middleware ran, how long your data loading took, how long rendering took, and how long it took to inject assets into the final HTML.
 
 This is not a plugin or a third-party add-on. Request tracing is built into Pyra from day one. In development, it's always on. In production, you choose whether and how to enable it.
 
@@ -22,13 +22,13 @@ Every time a request arrives at your Pyra server, a `RequestTracer` is created b
 
 As the request moves through each stage of the pipeline, the tracer logs the start and end of that stage:
 
-1. **route-match** — finding which route matches the incoming URL
-2. **middleware** — running middleware functions (each gets its own named stage)
-3. **load** — executing the route's `load()` function (fetching data)
-4. **render** — turning the component tree into HTML on the server
-5. **inject-assets** — adding script tags, stylesheets, and hydration code to the HTML
-6. **handler** — for API routes, executing the method handler (`GET`, `POST`, etc.)
-7. **static** — for static file requests, reading from disk
+1. **route-match** | finding which route matches the incoming URL
+2. **middleware** | running middleware functions (each gets its own named stage)
+3. **load** | executing the route's `load()` function (fetching data)
+4. **render** | turning the component tree into HTML on the server
+5. **inject-assets** | adding script tags, stylesheets, and hydration code to the HTML
+6. **handler** | for API routes, executing the method handler (`GET`, `POST`, etc.)
+7. **static** | for static file requests, reading from disk
 
 When the response is sent, the tracer finalizes with the HTTP status code and the completed trace is stored in memory.
 
@@ -59,8 +59,8 @@ For a more detailed view, Pyra outputs a tree-style log with bottleneck highligh
 
 The highlighting rules are simple:
 
-- A stage taking **more than 50%** of the total time is highlighted in **yellow** — it's a warning
-- A stage taking **more than 80%** of the total time is highlighted in **red** — it's a bottleneck
+- A stage taking **more than 50%** of the total time is highlighted in **yellow**, it's a warning
+- A stage taking **more than 80%** of the total time is highlighted in **red**, it's a bottleneck
 - Status codes are color-coded: 2xx green, 3xx cyan, 4xx yellow, 5xx red
 
 If a stage errors out, the error message is displayed inline so you can see exactly which step failed.
@@ -71,7 +71,7 @@ If a stage errors out, the error message is displayed inline so you can see exac
 
 Pyra adds a `Server-Timing` header to every traced response. This is a W3C standard that browsers understand natively.
 
-What does that mean for you? Open Chrome DevTools, click a request in the Network tab, and look at the Timing section. You'll see Pyra's pipeline stages listed right there — route matching, middleware, loading, rendering — with their durations. No browser extensions, no extra setup.
+What does that mean for you? Open Chrome DevTools, click a request in the Network tab, and look at the Timing section. You'll see Pyra's pipeline stages listed right there, route matching, middleware, loading, rendering with their durations. No browser extensions, no extra setup.
 
 The header looks like this:
 
@@ -105,7 +105,7 @@ curl http://localhost:3000/_pyra/api/traces/stats
 
 ## Route Statistics
 
-Pyra doesn't just show individual traces — it aggregates them to give you a picture of how each route performs over time.
+Pyra doesn't just show individual traces, it aggregates them to give you a picture of how each route performs over time.
 
 For every route, Pyra tracks:
 
@@ -113,12 +113,12 @@ For every route, Pyra tracks:
 |--------|--------------|
 | **count** | How many requests this route has handled |
 | **avgMs** | The average response time |
-| **p50** | The median — half of requests were faster, half slower |
+| **p50** | The median, half of requests were faster, half slower |
 | **p95** | 95% of requests were faster than this. Useful for catching occasional spikes. |
 | **p99** | 99% of requests were faster than this. If this is high, some users are having a bad time. |
 | **lastMs** | The response time of the most recent request |
 
-These stats are a great way to find routes that need optimization without profiling every individual request. A route with a low average but a high p95 means it's usually fast but sometimes spikes — worth investigating.
+These stats are a great way to find routes that need optimization without profiling every individual request. A route with a low average but a high p95 means it's usually fast but sometimes spikes, worth investigating.
 
 ---
 
@@ -180,9 +180,9 @@ Each trace is a small object, but storing thousands will use more memory. For mo
 
 When your page is slow, Pyra tells you exactly why:
 
-- **`load` is the bottleneck?** Your data fetching is slow — optimize database queries or API calls.
+- **`load` is the bottleneck?** Your data fetching is slow, optimize database queries or API calls.
 - **`render` is the bottleneck?** Your component tree is too large or doing expensive work during render.
-- **`middleware` is the bottleneck?** One of your middleware functions is doing heavy processing — check the stage names to find which one.
+- **`middleware` is the bottleneck?** One of your middleware functions is doing heavy processing, check the stage names to find which one.
 - **`route-match` is slow?** You likely have a very large number of routes (this is rare).
 
 No guessing. No adding timing code manually. No installing third-party APM services just to understand where your server spends its time. The information is always there in development, and available on demand in production.
@@ -192,9 +192,15 @@ No guessing. No adding timing code manually. No installing third-party APM servi
 ## Tips
 
 - **Watch the terminal during development.** The per-request log lines quickly reveal if a route is slower than expected.
+
 - **Use the `/_pyra` dashboard** for a visual overview when you want to compare routes side by side.
+
 - **Set `production: 'header'`** so you can debug specific production requests without tracing everything.
+
 - **Check p95 and p99 in route stats.** A fast average with a high p95 means most users are fine, but some are hitting a slow path.
-- **If `load` is consistently slow**, focus on your `load()` function — caching, query optimization, or reducing data volume will help.
+
+- **If `load` is consistently slow**, focus on your `load()` function, caching, query optimization, or reducing data volume will help.
+
 - **If `render` is consistently slow**, simplify your component tree or move computation into `load()` so it happens before rendering.
+
 - **Traces are lightweight.** In development, let them run and glance at the output as you work.
