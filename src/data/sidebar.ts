@@ -15,7 +15,8 @@ import {
   Shield,
   ScanSearch,
   Server,
-  Cable
+  Cable,
+  ListTodo,
 } from "lucide-react";
 
 export const SIDEBAR_ITEMS = [
@@ -101,6 +102,11 @@ export const SIDEBAR_ITEMS = [
         path: "/docs/troubleshooting",
         label: "Troubleshooting",
         icon: HelpCircle,
+      },
+      {
+        path: "/docs/sample-todo",
+        label: "Sample Todo Project",
+        icon: ListTodo,
       },
     ],
   },

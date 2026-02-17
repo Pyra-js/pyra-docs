@@ -17,6 +17,7 @@ import Middleware from "../../docs/middleware.mdx";
 import RequestTracing from "../../docs/request-tracing.mdx";
 import SSR from "../../docs/SSR.mdx";
 import Adapters from "../../docs/adapters.mdx";
+import SampleTodo from "../../docs/sample-todo.mdx";
 import { Route, Routes } from "react-router";
 import Home from "@/components/home";
 
@@ -158,6 +159,14 @@ function DocRoutes() {
         element={
           <DocsLayout>
             <Adapters />
+          </DocsLayout>
+        }
+      />
+      <Route
+        path="/docs/sample-todo"
+        element={
+          <DocsLayout>
+            <SampleTodo />
           </DocsLayout>
         }
       />
