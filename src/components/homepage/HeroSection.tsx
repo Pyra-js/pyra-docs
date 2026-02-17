@@ -54,7 +54,7 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.7 }}
         >
-          A full-stack TypeScript framework with SSR, file-based routing, and a fully traceable request pipeline.
+          A full-stack TypeScript framework for building interactive web applications.
         </motion.p>
 
         <motion.ul
