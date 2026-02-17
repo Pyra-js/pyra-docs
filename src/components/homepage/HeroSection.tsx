@@ -17,7 +17,7 @@ export default function HeroSection() {
         <PyraLogo />
 
         <motion.h1
-          className="text-6xl md:text-8xl font-bold mb-6 italic lowercase"
+          className="text-6xl md:text-9xl font-bold mb-6 italic"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
@@ -27,7 +27,7 @@ export default function HeroSection() {
           }}
         >
           <span
-            className="bg-gradient-to-r from-amber-400 via-rose-500 to-violet-600 bg-clip-text text-transparent"
+            className="bg-gradient-to-r from-amber-400 via-rose-500 to-violet-600 bg-clip-text text-transparent pl-2"
             style={{
               backgroundSize: "200% 200%",
               animation: "gradient 3s ease infinite",
@@ -44,7 +44,7 @@ export default function HeroSection() {
           transition={{ duration: 0.8, delay: 0.5 }}
         >
           <span className="bg-gradient-to-r from-amber-400 via-rose-500 to-violet-600 bg-clip-text text-transparent">
-            Ship fast. See everything.
+            Fast. Simple. Full-Stack.
           </span>
         </motion.h2>
 
