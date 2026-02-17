@@ -8,7 +8,7 @@ const items = [
     icon: <TerminalSquare className="w-6 h-6 text-amber-400" />,
     title: "CLI Wizard",
     description:
-      "Run npm create pyra@latest and answer six questions. Framework, TypeScript, Tailwind, shadcn — configured and ready.",
+      "Run npm create pyra@latest and answer six questions. Framework, Language, UI Components, configured and ready.",
   },
   {
     icon: <Keyboard className="w-6 h-6 text-amber-400" />,
@@ -31,7 +31,7 @@ export default function DevExperienceSection() {
         <SectionHeader
           title="Build without friction."
           gradientWord="friction"
-          subtitle="The CLI, the scaffold, the dev loop — designed to stay out of your way."
+          subtitle="The CLI, the scaffold, the dev loop, designed to stay out of your way."
         />
         <div className="flex flex-col md:flex-row gap-12 items-start">
           <motion.div

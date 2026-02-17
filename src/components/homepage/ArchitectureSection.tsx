@@ -50,7 +50,7 @@ export default function ArchitectureSection() {
           transition={{ duration: 0.6, delay: 0.4 }}
         >
           Today Pyra ships with React. The adapter boundary is clean enough for
-          Svelte, Vue, or Solid — without touching core.
+          Svelte, Vue, or Solid, without touching core.
         </motion.p>
       </div>
     </section>

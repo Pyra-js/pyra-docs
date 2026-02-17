@@ -20,12 +20,12 @@ function Home() {
       <div className="relative z-10">
         <HeroSection />
         <FeaturesSection />
+        <FinalCTASection />
         <PrinciplesSection />
         <DevExperienceSection />
         <ObservabilitySection />
         <RoutingRenderingSection />
         <ArchitectureSection />
-        <FinalCTASection />
         <CreatorSection />
         <Footer />
       </div>
