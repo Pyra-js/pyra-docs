@@ -35,7 +35,7 @@ function PrincipleCard({ title, text, codeLabel, code, delay }: PrincipleCardPro
 const principles = [
   {
     title: "App-first, not content-first",
-    text: "Pyra treats every page as a server-rendered React component, not a markdown file with sprinkled interactivity. Your data loading, middleware, and rendering all live in the same request cycle. Build dashboards and tools — not just blogs.",
+    text: "Pyra treats every page as a server-rendered React component, not a markdown file with sprinkled interactivity. Your data loading, middleware, and rendering all live in the same request cycle. Build dashboards and tools, not just blogs.",
     codeLabel: "src/routes/dashboard/page.tsx",
     code: (
       <pre className="text-sm whitespace-pre">
@@ -108,7 +108,7 @@ const principles = [
   },
   {
     title: "Radical transparency",
-    text: "Every dev request writes a timing trace to your terminal. Production responses carry Server-Timing headers. You never wonder why a page was slow — you see it.",
+    text: "Every dev request writes a timing trace to your terminal. Production responses carry Server-Timing headers. You never wonder why a page was slow, you see it.",
     codeLabel: "dev server",
     code: (
       <pre className="text-sm whitespace-pre">
