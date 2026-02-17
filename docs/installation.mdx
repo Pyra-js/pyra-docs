@@ -1,88 +1,85 @@
-# 🧪 Installation
+# Installation
 
-Get up and running with **Pyra.js** in under a minute. Installing Pyra is simple, fast, and flexible, just like the tool itself. This guide will walk you through everything you need to get started, from installing the CLI to creating your first Pyra project.
-
+Get up and running with Pyra in under a minute.
 
 ## Prerequisites
 
-* **[Node.js]("https://nodejs.org/en")** version **18.0.0** or higher (LTS recommended)
-* **[npm]("https://www.npmjs.com/")**, **[pnpm]("https://pnpm.io/installation")**, or **[yarn]("https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable")** as your package manager
+- [Node.js](https://nodejs.org/en) version 18.0.0 or higher (LTS recommended)
+- [npm](https://www.npmjs.com/), [pnpm](https://pnpm.io/installation), [yarn](https://classic.yarnpkg.com/lang/en/docs/install/), or [bun](https://bun.sh/) as your package manager
 
-## 🪄 Installing the Pyra CLI
+## Creating a New Project
 
-Pyra’s CLI is the heart of the tool, it’s what you’ll use to create projects, run development servers, and build production bundles. You can use it through `npx` for one-off projects or install it globally for regular use. 
+The fastest way to start is with `create-pyra`, which scaffolds a full project and walks you through setup:
 
-If you plan to use Pyra across multiple projects, global installation is the most convenient option, allowing you to run the pyra command from anywhere on your system without reinstalling it each time.
+```bash
+npm create pyra my-app
+```
+
+You'll be prompted to choose:
+
+- **Framework** - React (full-stack SSR with file-based routing) or Vanilla (lightweight JS/TS)
+- **Language** - TypeScript or JavaScript
+- **Tailwind CSS** - optional, with preset choices
+
+Once scaffolding is complete:
+
+```bash
+cd my-app
+npm install
+npm run dev
+```
+
+Your app will be running at `http://localhost:3000`
+
+## Initializing in an Existing Directory
+
+If you already have a directory and want to set up Pyra inside it, use `pyra init`:
+
+```bash
+mkdir my-app && cd my-app
+npx pyrajs-cli init
+```
+
+This initializes the project in the current directory using the same template prompts.
+
+## Installing the CLI Globally
+
+If you work with Pyra across multiple projects, you can install the CLI globally:
 
 ```bash
 npm install -g pyrajs-cli
 ```
-Now you can access the `pyra` command anywhere on your system:
+
+This gives you access to the `pyra` command anywhere:
 
 ```bash
-pyra create my-app
+pyra init
+pyra dev
+pyra build
+pyra start
 ```
-💡**Tip**: If you’re using pnpm, you can use pnpm add -g pyra for global installs as well.
 
 ## Local Installation
 
-For team projects or monorepos, it’s often best to install Pyra locally as a dev dependency:
+For team projects, install Pyra as a local dev dependency so everyone uses the same version:
 
 ```bash
-npm install -D pyrajs-cli
+npm install -D pyrajs-cli pyrajs-core pyrajs-adapter-react pyrajs-shared
 ```
-Then you can add scripts to your package.json:
+
+Then add scripts to your `package.json`:
+
 ```json
 {
   "scripts": {
     "dev": "pyra dev",
     "build": "pyra build",
-    "preview": "pyra preview"
+    "start": "pyra start"
   }
 }
 ```
-This approach ensures everyone on your team uses the same Pyra version, no global mismatches.
 
+## What's Next
 
-## 🧱 Creating a New Project
-
-Once you have the CLI ready, create a new project using:
-
-```bash
-pyra create my-app
-```
-Or if you just want to try Pyra without installing anything globally, the fastest way is:
-
-```bash
-npx pyra@latest create my-app
-```
-
-This command will use the latest Pyra release directly from npm, scaffold a new project, and initialize your environment.
-
-You’ll be prompted to choose a project type, such as:
-
-* React (Vite-style JSX/TSX setup)
-
-* Vanilla (lightweight JS or TS project)
-
-* Library (build tools for npm packages)
-
-* Custom (start from scratch with your own config)
-
-After selecting your template, Pyra automatically sets up the folder and configures everything for development. Pyra waits to install dependencies just in case you'd like to switch out or change the layout.
-
-To start your dev server:
-
-```bash
-cd my-app
-npm install
-pyra dev
-```
-
-Your project will spin up locally on a development server, complete with HMR (Hot Module Reloading) and instant rebuilds.
-
-
-
-
-
-Your app will be available at `http://localhost:3000` 🔥
+- [File-Based Routing](/docs/file-based-routing) — how pages, layouts, and API routes are organized
+- [CLI Reference](/docs/cli) — all available commands and options
