@@ -18,6 +18,7 @@ import RequestTracing from "../../docs/request-tracing.mdx";
 import SSR from "../../docs/SSR.mdx";
 import Adapters from "../../docs/adapters.mdx";
 import SampleTodo from "../../docs/sample-todo.mdx";
+import ImageOptimization from "../../docs/Image-Optimization.mdx";
 import { Route, Routes } from "react-router";
 import Home from "@/components/home";
 
@@ -167,6 +168,14 @@ function DocRoutes() {
         element={
           <DocsLayout>
             <SampleTodo />
+          </DocsLayout>
+        }
+      />
+      <Route
+        path="/docs/image-optimization"
+        element={
+          <DocsLayout>
+            <ImageOptimization />
           </DocsLayout>
         }
       />

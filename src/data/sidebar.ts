@@ -17,6 +17,7 @@ import {
   Server,
   Cable,
   ListTodo,
+  ImageIcon,
 } from "lucide-react";
 
 export const SIDEBAR_ITEMS = [
@@ -86,6 +87,11 @@ export const SIDEBAR_ITEMS = [
         path: "/docs/adapters",
         label: "Adapters",
         icon: Cable,
+      },
+      {
+        path: "/docs/image-optimization",
+        label: "Image Optimization",
+        icon: ImageIcon,
       },
     ],
   },
