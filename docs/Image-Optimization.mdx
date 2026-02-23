@@ -1,20 +1,20 @@
 # Image Optimization
 
-Automatically resize and convert images to modern formats — with zero config in development.
+Automatically resize and convert images to modern formats, with zero config in development.
 
 ---
 
 ## What is Image Optimization?
 
-Serving unoptimized images is one of the most common ways to slow down a web app. A 4 MB PNG hero image, a JPEG that's twice as wide as any screen that will ever display it, or a format the browser could render faster with WebP or AVIF — all of these hurt load times and user experience.
+Serving unoptimized images is one of the most common ways to slow down a web app. A 4 MB PNG hero image, a JPEG that's twice as wide as any screen that will ever display it, or a format the browser could render faster with WebP or AVIF, all of these hurt load times and user experience.
 
 Pyra's image optimization plugin handles this automatically:
 
-- **Format conversion** — converts images to WebP and AVIF, which are significantly smaller than JPEG and PNG at equivalent quality
-- **Responsive resizing** — generates multiple sizes so the browser downloads only what it needs for the current viewport
-- **Lazy loading** — defers off-screen images by default so they don't block the initial render
-- **Zero-config dev server** — images are optimized on-demand during development; no build step required
-- **Pre-built variants in production** — at build time, every image variant is generated and written to `dist/`, then served with immutable cache headers
+- **Format conversion** - converts images to WebP and AVIF, which are significantly smaller than JPEG and PNG at equivalent quality
+- **Responsive resizing** - generates multiple sizes so the browser downloads only what it needs for the current viewport
+- **Lazy loading** - defers off-screen images by default so they don't block the initial render
+- **Zero-config dev server** - images are optimized on-demand during development; no build step required
+- **Pre-built variants in production** - at build time, every image variant is generated and written to `dist/`, then served with immutable cache headers
 
 Image optimization is opt-in. It requires [sharp](https://sharp.pixelplumbing.com/) and is enabled by adding the `pyraImages()` plugin to your config.
 
@@ -32,7 +32,7 @@ pnpm add sharp
 yarn add sharp
 ```
 
-sharp is a native module — it ships prebuilt binaries for common platforms (macOS, Linux, Windows). If you're deploying to a platform with a non-standard architecture, see the [sharp installation docs](https://sharp.pixelplumbing.com/install).
+sharp is a native module, it ships prebuilt binaries for common platforms (macOS, Linux, Windows). If you're deploying to a platform with a non-standard architecture, see the [sharp installation docs](https://sharp.pixelplumbing.com/install).
 
 ---
 
@@ -62,7 +62,7 @@ With no arguments, `pyraImages()` uses sensible defaults:
 |--------|---------|-------------|
 | `formats` | `['webp']` | Output formats to generate |
 | `sizes` | `[640, 1280, 1920]` | Widths (in pixels) to generate variants for |
-| `quality` | `80` | Compression quality, 1–100 |
+| `quality` | `80` | Compression quality, 1 - 100 |
 
 ---
 
@@ -107,7 +107,7 @@ This renders a `<picture>` element with a `<source>` tag for each format you con
 
 ### Using the `sizes` Prop
 
-The `sizes` prop tells the browser how wide the image will be rendered at different viewport widths. This is how the browser decides which variant to download — it compares the rendered width against the available variants and picks the closest match.
+The `sizes` prop tells the browser how wide the image will be rendered at different viewport widths. This is how the browser decides which variant to download, it compares the rendered width against the available variants and picks the closest match.
 
 ```tsx
 {/* Full-width hero */}
@@ -149,7 +149,7 @@ The dev server handles image optimization on-demand. When the `<Image>` componen
 3. Caches the result in memory for 60 seconds
 4. Returns the optimized image with the correct `Content-Type`
 
-There's no build step — you see the optimized image immediately in the browser, and subsequent requests for the same variant are served from cache.
+There's no build step, you see the optimized image immediately in the browser, and subsequent requests for the same variant are served from cache.
 
 ### In Production
 
@@ -177,7 +177,7 @@ Pyra will never generate a variant wider than the original image. If your source
 | `jpeg` | Lossy, universal support. Useful if you need a guaranteed JPEG output. |
 | `png` | Lossless. Use only when transparency is required and WebP/AVIF aren't sufficient. |
 
-For most apps, `['webp', 'avif']` is the right choice. The `<Image>` component puts `avif` first in its `<source>` tags — browsers that support it will use it, and those that don't will fall back to WebP, then to the original.
+For most apps, `['webp', 'avif']` is the right choice. The `<Image>` component puts `avif` first in its `<source>` tags, browsers that support it will use it, and those that don't will fall back to WebP, then to the original.
 
 ---
 
@@ -232,7 +232,7 @@ The plugin config sets defaults for the build. The `<Image>` component accepts `
 
 By default, images use `loading="lazy"`, which defers loading until the image is close to the viewport. This is the right default for most images.
 
-For images that are visible immediately on page load — hero images, above-the-fold content — use `loading="eager"` so the browser prioritizes them:
+For images that are visible immediately on page load, hero images, or above-the-fold content, use `loading="eager"` so the browser prioritizes them:
 
 ```tsx
 <Image
@@ -262,7 +262,7 @@ The `<Image>` component generates URLs in this format:
 | `format` | Output format: `webp`, `avif`, `jpeg`, or `png` |
 | `q` | Quality 1–100 |
 
-You can construct these URLs manually if you need image optimization outside the `<Image>` component — for example, in a CSS background or an OG image tag. In production, the server will look up the pre-built variant from the manifest. In development, it will optimize on demand.
+You can construct these URLs manually if you need image optimization outside the `<Image>` component, for example, in a CSS background or an OG image tag. In production, the server will look up the pre-built variant from the manifest. In development, it will optimize on demand.
 
 ---
 
@@ -288,16 +288,16 @@ The plugin only processes raster formats: `.jpg`, `.jpeg`, `.png`, `.gif`, `.web
 If sharp isn't installed, the plugin logs a warning and disables itself gracefully:
 
 ```
-[pyra:images] sharp not installed — image optimization disabled. Run: npm install sharp
+[pyra:images] sharp not installed, image optimization disabled. Run: npm install sharp
 ```
 
-Your app still works — images are served as-is from `public/` — but no resizing or format conversion happens. The `/_pyra/image` endpoint returns a 501 in development and the `<Image>` component falls back to the original `src` in the `<img>` tag.
+Your app still works, images are served as-is from `public/`, but no resizing or format conversion happens. The `/_pyra/image` endpoint returns a 501 in development and the `<Image>` component falls back to the original `src` in the `<img>` tag.
 
 ---
 
 ## Tips
 
-- **Always specify `width` and `height`.** Providing dimensions prevents layout shift (CLS) — the browser reserves space for the image before it loads, so the page doesn't jump around.
+- **Always specify `width` and `height`.** Providing dimensions prevents layout shift (CLS), the browser reserves space for the image before it loads, so the page doesn't jump around.
 - **Use `loading="eager"` for above-the-fold images only.** The first hero image or banner should be eager. Everything else should be lazy.
 - **Match `sizes` to your CSS.** If your image is displayed at `max-width: 800px` inside a centered container, set `sizes="(min-width: 800px) 800px, 100vw"` so the browser downloads the right variant.
 - **Fewer formats is usually fine.** `['webp']` alone covers 97%+ of modern browsers. Add `avif` only if you need the extra compression savings.

@@ -59,7 +59,7 @@ export default defineConfig({
 
 ## Module Resolution & Aliases
 
-Larger codebases benefit from stable import paths. Pyra supports alias mapping through a `resolve.alias` field that mirrors what you might know from Vite/Rollup. If your project uses `tsconfig.json` path mapping, Pyra can optionally read those paths and hydrate aliases automatically to keep TS and bundler resolution aligned.
+Larger codebases benefit from stable import paths that don't change when files move. Pyra supports alias mapping through a `resolve.alias` field that mirrors what you might know from vite/Rollup. 
 
 ```ts
 export default defineConfig({
@@ -73,7 +73,52 @@ export default defineConfig({
   },
 });
 ```
+Alias values are relative to your project root. Pyra resolves them to absolute paths before handing them to esbuild, so `./src` becomes `/full/path/to/your/project/src` internally, you never need to write absolute paths yourself.
+
+Extensions controls the order in which esbuild tries file extensions when an import has none. Writing import `./Button` with no extension will attempt `.ts`, then `.tsx`, and so on down the list. 
+
+### TypeScript path mapping
+
+Pyra's `resolve.alias` is a bundler-level setting, it tells esbuild how to rewrite imports at compile time. TypeScript's type checker is separater and doesn't know about it. Without additional configuration, TypeScript will flag aliased imports as errors when through they work fine at runtime. 
+
+To fix this, add matching entries to your `tsconfig.json`: 
+
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@utils/*": ["./src/shared/utils/*"] // example
+    }
+  }
+}
+```
+
+Two things to know here: 
+
+* `baseUrl` is required. The paths field is always resolve relative to it. Setting it to `.` anchors everything to the directory containing `tsconfig.json`, which is usually your project root. 
+
+* `paths` uses prefix wildcards, esbuild uses exact strings. In your Pyra config, `"@/": "./src"` is an exact alias, esbuild replaces the entire specifier `@` with the resolved path, then appends the import (`/Button, /components/Card, etc`) itself. 
+
+TypeScript's paths works differently: `"@/*"` is a pattern, and the * captures whatever comes after `@/`. The `["./src/*"]` on the right substitutes the same captured segment in. Both end up pointing to the same files, the syntax just differs.
+
+The two configs must be kept manually in sync. If you add an alias in `pyra.config.ts`, add the corresponding paths entry in `tsconfig.json` or TypeScript will complain even though the build works.
+
 Use `external` when building libraries to avoid bundling peer dependencies. This produces smaller outputs and respects consumer versions.
+
+### External packages
+
+Use `build.external` when building a library rather than an app, it tells esbuild to leave listed packages as bare imports rather than bundling their code: 
+
+```ts
+export default defineConfig({
+  build: {
+    external: ["react", "react-dom"],
+  },
+});
+```
+This produces smaller outputs and ensures consumers use their own installed versions of peer dependencies rather than a copy bundled inside your library.
 
 
 ## Dev Server Controls

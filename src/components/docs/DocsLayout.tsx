@@ -26,7 +26,7 @@ export default function DocsLayout({ children }: DocsLayoutProps) {
             </span>
           </Link>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-500 hidden sm:block">v0.5.0-beta</span>
+            <span className="text-sm text-gray-500 hidden sm:block">v0.16.4-beta</span>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="lg:hidden text-gray-400 hover:text-gray-200 p-2"
