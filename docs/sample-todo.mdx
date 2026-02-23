@@ -334,8 +334,8 @@ The `{children}` slot is where each page gets rendered. When someone visits `/`,
 
 This is the most interesting part. The page has two jobs:
 
-1. **On the server** — load the todos from the data store before anything is sent to the browser
-2. **In the browser** — show the todos and let the user interact with them
+1. **On the server** - load the todos from the data store before anything is sent to the browser
+2. **In the browser** - show the todos and let the user interact with them
 
 Pyra handles both with a single file.
 
@@ -347,7 +347,7 @@ If you export a `load()` function from a page file, Pyra calls it on the server 
 User visits /  →  Pyra calls load()  →  Gets todos  →  Renders page with todos  →  Sends HTML to browser
 ```
 
-This means the browser receives a fully-rendered page with real data — no loading spinner, no blank flash.
+This means the browser receives a fully-rendered page with real data, no loading spinner, no blank flash.
 
 ### The page
 
@@ -505,7 +505,7 @@ export default function TodoPage({ todos: initialTodos }: { todos: Todo[] }) {
 
 **`load()` runs on the server.** It calls `getAllTodos()` and returns the result. Pyra passes that to `TodoPage` as the `todos` prop. By the time the browser gets the HTML, the todos are already in it.
 
-**The component runs twice — once on the server, once in the browser.** On the server, React renders it to HTML and sends that HTML to the browser. In the browser, React "hydrates" the same component: it attaches event listeners to the existing HTML so the checkboxes and buttons become clickable. This process is invisible to the user — they just see a page that works immediately.
+**The component runs twice - once on the server, once in the browser.** On the server, React renders it to HTML and sends that HTML to the browser. In the browser, React "hydrates" the same component: it attaches event listeners to the existing HTML so the checkboxes and buttons become clickable. This process is invisible to the user, they just see a page that works immediately.
 
 **After hydration, the component runs purely in the browser.** When the user clicks "Add", the component calls `fetch()` to hit your `/api/todos` route, then updates its own state. No page reload needed.
 
@@ -533,7 +533,7 @@ npm run build
 npm run start
 ```
 
-`npm run build` compiles and optimizes everything into a `dist/` folder. `npm run start` serves it with the production server. The app works the same way in production — same API routes, same server-side data loading.
+`npm run build` compiles and optimizes everything into a `dist/` folder. `npm run start` serves it with the production server. The app works the same way in production, same API routes, same server-side data loading.
 
 ---
 
@@ -553,7 +553,7 @@ And the key concepts you used:
 | Concept                        | What it means                                                          |
 | ------------------------------ | ---------------------------------------------------------------------- |
 | File-based routing             | Your file's path in `src/routes/` becomes its URL                      |
-| `[id]` folder                  | A dynamic segment — matches any value, readable via `ctx.params.id`    |
+| `[id]` folder                  | A dynamic segment - matches any value, readable via `ctx.params.id`    |
 | `export function GET`          | Handles `GET` requests to that route's URL                             |
 | `export async function load()` | Runs on the server before the page renders; return value becomes props |
 | `ctx.json()`                   | Sends a JSON response                                                  |

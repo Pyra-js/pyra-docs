@@ -264,6 +264,6 @@ export function load(ctx) {
 - **Always set `path: '/'` for session cookies.** Without it, the browser scopes the cookie to the current URL path, which means `/api/login` sets a cookie only visible to requests under `/api/`. Use `path: '/'` for any cookie that should be site-wide.
 - **Use `httpOnly: true` for session tokens.** This prevents JavaScript from reading the cookie, protecting against XSS attacks that try to steal session data.
 - **Use `secure: true` in production.** The `ctx.mode` field lets you set this conditionally: `secure: ctx.mode === 'production'`.
-- **Prefer `maxAge` over `expires`.** `maxAge` is relative (in seconds from now), so it works correctly regardless of clock differences between the server and browser. `expires` is an absolute date — if the clocks are out of sync, behaviour is unpredictable.
+- **Prefer `maxAge` over `expires`.** `maxAge` is relative (in seconds from now), so it works correctly regardless of clock differences between the server and browser. `expires` is an absolute date, if the clocks are out of sync, behaviour is unpredictable.
 - **Cookie values are always strings.** You can't store objects or numbers directly. Serialize them: `ctx.cookies.set('prefs', JSON.stringify(prefs))`, then `JSON.parse(ctx.cookies.get('prefs') ?? '{}')`.
 - **Cookies are not encrypted.** Anyone with access to the browser can read a cookie's value. Never store raw passwords, tokens with embedded permissions, or sensitive user data directly in a cookie value. Store an opaque session ID and look up the sensitive data server-side.

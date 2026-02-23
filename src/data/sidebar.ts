@@ -20,6 +20,7 @@ import {
   ImageIcon,
   Box,
   Cookie,
+  LayoutDashboard,
 } from "lucide-react";
 
 export const SIDEBAR_ITEMS = [
@@ -104,6 +105,11 @@ export const SIDEBAR_ITEMS = [
         path: "/docs/cookies",
         label: "Cookies",
         icon: Cookie,
+      },
+      {
+        path: "/docs/dashboard",
+        label: "Dashboard",
+        icon: LayoutDashboard,
       },
     ],
   },
