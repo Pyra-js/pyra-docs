@@ -1,146 +1,286 @@
 # Plugins
 
-Extend `Pyra.js` with plugins.
+Extend Pyra's build pipeline, dev server, and bundler with custom behavior.
 
-Plugins are the heart of Pyra’s flexibility. They allow you to intercept and extend nearly every part of the system, from configuration loading and dependency resolution to code transformation, bundling, and server behavior.  
+---
 
-If Pyra is the engine, plugins are the fuel that let it adapt to any workflow, framework, or build pipeline. Whether you’re writing a small utility or a full-fledged framework integration, the plugin API gives you total control.
+## What are Plugins?
 
-## 🔥 What Are Plugins?
+A Pyra plugin is an object with a `name` and one or more lifecycle hooks. Each hook runs at a specific point in the toolchain, before the config is resolved, when the build starts, when a module is transformed, when the dev server starts, and so on.
 
-A **Pyra plugin** is simply an object that implements one or more lifecycle hooks. Each hook gives you access to a different stage of the toolchain, configuration, file resolution, module loading, code transformation, bundling, or post-processing.  
+Common uses for plugins:
 
-You can think of Pyra’s build process as a series of events. Each plugin can “listen” to certain events and act when they occur. For example, you might write a plugin that injects banners into built files, loads Markdown as components, or rewrites import paths dynamically.
+- **Custom transforms** - compile non-standard file types (MDX, YAML, GraphQL schemas) into JavaScript modules
+- **Build instrumentation** - collect stats, write reports, or post-process the manifest after a build
+- **Dev server extensions** - inject custom middleware to mock APIs, add auth headers, or proxy requests
+- **Bundler integration** - wrap existing esbuild plugins and make them available to Pyra's build pipeline
+- **Config manipulation** - inject environment-specific defaults before the config is finalized
 
-Here’s the simplest possible plugin:
+Plugins are registered in your `pyra.config.ts` and run in order:
 
 ```ts
-import { type PyraPlugin } from "pyra";
+// pyra.config.ts
+import { defineConfig } from 'pyrajs-core';
+import myPlugin from './plugins/my-plugin';
 
-export default function helloPlugin(): PyraPlugin {
+export default defineConfig({
+  plugins: [myPlugin()],
+});
+```
+
+---
+
+## Writing a Plugin
+
+A plugin is a plain object. The only required field is `name`, everything else is optional:
+
+```ts
+// plugins/hello.ts
+import type { PyraPlugin } from 'pyrajs-shared';
+
+export function helloPlugin(): PyraPlugin {
   return {
-    name: "hello",
+    name: 'hello',
     buildStart() {
-      console.log("👋 Hello from Pyra!");
+      console.log('Build starting...');
     },
   };
 }
 ```
-You’d then add it to your `pyra.config.ts`:
+
+Wrapping the object in a function is the convention even when there are no options. It keeps usage consistent (`plugins: [helloPlugin()]`) and makes it easy to add options later without changing the call site.
+
+---
+
+## Lifecycle Hooks
+
+### `config`
+
+Called before the config is finalized. Receives the current config and the active mode (`"development"` or `"production"`). Return a modified config object to change it, or `null` to leave it unchanged.
 
 ```ts
-import { defineConfig } from "pyra";
-import helloPlugin from "./plugins/hello";
+import type { PyraPlugin } from 'pyrajs-shared';
+
+export function envDefaultsPlugin(): PyraPlugin {
+  return {
+    name: 'env-defaults',
+    config(config, mode) {
+      if (mode === 'production') {
+        return {
+          ...config,
+          build: { ...config.build, minify: true },
+        };
+      }
+      return null;
+    },
+  };
+}
+```
+
+This is the right place to inject defaults, normalize config fields, or read external files (like `.env`) and merge them into the config.
+
+---
+
+### `setup`
+
+Called once when the build pipeline is assembled, before any files are processed. Receives an API object you use to register esbuild plugins, dev server middleware, and to read the current config.
+
+```ts
+import type { PyraPlugin } from 'pyrajs-shared';
+import myEsbuildPlugin from './my-esbuild-plugin';
+
+export function integratePlugin(): PyraPlugin {
+  return {
+    name: 'integrate',
+    setup(api) {
+      // Inject an esbuild plugin into both client and server builds
+      api.addEsbuildPlugin(myEsbuildPlugin());
+
+      // Register custom dev server middleware
+      api.addMiddleware((req, res, next) => {
+        if (req.url === '/mock-api') {
+          res.end(JSON.stringify({ mocked: true }));
+          return;
+        }
+        next();
+      });
+    },
+  };
+}
+```
+
+`setup` API:
+
+| Method | Description |
+|--------|-------------|
+| `addEsbuildPlugin(plugin)` | Inject an esbuild plugin into every esbuild build pass (client + server) |
+| `addMiddleware(fn)` | Register raw Node.js-style middleware for the dev server |
+| `getConfig()` | Return the resolved `PyraConfig` at the time `setup` runs |
+| `getMode()` | Return the active mode: `"development"` or `"production"` |
+
+---
+
+### `transform`
+
+Called for each module before it's bundled. Receives the source code string and the file path. Return `{ code, map? }` to replace the source, or `null` to leave it unchanged.
+
+```ts
+import type { PyraPlugin } from 'pyrajs-shared';
+
+export function bannerPlugin(text: string): PyraPlugin {
+  return {
+    name: 'banner',
+    transform(code, id) {
+      if (!id.endsWith('.ts') && !id.endsWith('.tsx')) return null;
+      return { code: `// ${text}\n${code}` };
+    },
+  };
+}
+```
+
+The `id` is the absolute file path. Use it to filter which files the transform applies to.
+
+`map` is an optional source map object. If your transform shifts line numbers significantly, returning an accurate source map keeps browser devtools pointed at the right source lines.
+
+---
+
+### `serverStart`
+
+Called once when the dev server starts, after it is listening for connections. Receives the raw Node.js `http.Server` instance.
+
+```ts
+import type { PyraPlugin } from 'pyrajs-shared';
+
+export function serverInfoPlugin(): PyraPlugin {
+  return {
+    name: 'server-info',
+    serverStart(server) {
+      const addr = server.address();
+      console.log('Dev server address:', addr);
+    },
+  };
+}
+```
+
+This hook only runs during `pyra dev`. It does not run during `pyra build` or `pyra start`.
+
+---
+
+### `buildStart`
+
+Called once before the production build begins, after `config` and `setup` have run. Use this for setup work that must happen before any files are compiled, cleaning temporary directories, prefetching data, validating external dependencies.
+
+```ts
+import type { PyraPlugin } from 'pyrajs-shared';
+
+export function validatePlugin(): PyraPlugin {
+  return {
+    name: 'validate',
+    async buildStart() {
+      const ok = await checkExternalService();
+      if (!ok) {
+        throw new Error('Required service is unreachable — aborting build.');
+      }
+    },
+  };
+}
+```
+
+Throwing inside `buildStart` aborts the build with a non-zero exit code.
+
+---
+
+### `buildEnd`
+
+Called once after all bundles have been compiled and the manifest has been assembled, but **before** it is written to disk. Receives a context object with the mutable manifest, the output directory path, and the project root.
+
+```ts
+import type { PyraPlugin } from 'pyrajs-shared';
+import fs from 'node:fs';
+import path from 'node:path';
+
+export function buildReportPlugin(): PyraPlugin {
+  return {
+    name: 'build-report',
+    buildEnd({ manifest, outDir, root }) {
+      const routeCount = Object.keys(manifest.routes).length;
+      const report = `Built ${routeCount} routes at ${new Date().toISOString()}\n`;
+      fs.writeFileSync(path.join(outDir, 'build-report.txt'), report);
+    },
+  };
+}
+```
+
+Because `manifest` is passed by reference and is still mutable at this point, you can add, modify, or remove entries before they are written to `dist/manifest.json`. The built-in `pyraImages()` plugin uses this hook to merge image variant data into the manifest.
+
+---
+
+## Hook Execution Order
+
+When multiple plugins implement the same hook, they run in the order they appear in the `plugins` array. Each hook in the sequence receives the output of the previous one, this is how plugin composition works.
+
+| Hook | When it runs | Runs during |
+|------|-------------|-------------|
+| `config` | Before config is finalized | `dev`, `build`, `start` |
+| `setup` | When build pipeline is assembled | `dev`, `build` |
+| `serverStart` | After dev server starts listening | `dev` only |
+| `buildStart` | Before any files are compiled | `build` only |
+| `transform` | Per-module, during bundling | `dev`, `build` |
+| `buildEnd` | After bundling, before manifest is written | `build` only |
+
+---
+
+## Built-in Plugins
+
+Pyra ships one official plugin: `pyraImages()`.
+
+It adds on-demand image optimization in development and pre-built variant generation at build time. See the [Image Optimization](./image-optimization.mdx) guide for full setup instructions.
+
+```ts
+import { defineConfig } from 'pyrajs-core';
+import { pyraImages } from 'pyrajs-core';
 
 export default defineConfig({
-  plugins: [helloPlugin()],
+  plugins: [
+    pyraImages({
+      formats: ['webp', 'avif'],
+      sizes: [640, 1280, 1920],
+    }),
+  ],
 });
 ```
 
-## 🧠 How Pyra Loads Plugins
+---
 
-When you run any command like `dev`, `build`, or `preview`, Pyra automatically reads the plugins array from your config. Each plugin runs in the order it appears, unless it specifies `enforce: "pre"` or `enforce: "post"`, which moves it earlier or later in the execution flow.
+## Publishing a Plugin
 
-Pyra also handles plugin composition. If you install multiple plugins that share hooks, Pyra merges them intelligently and passes shared context between them, so transformations are isolated but consistent.
-
-## 🧩 Official Pyra Plugins
-
-Pyra includes a small set of **officially maintained plugins** that serve as first-class integrations for popular front-end frameworks and developer workflows. These plugins ensure compatibility, optimized defaults, and a clean setup experience out of the box.
-
-### 🔹 @pyra/plugin-react
-
-Adds support for React and JSX/TSX transforms using the modern React Refresh system.  
-It automatically enables fast refresh in dev mode and tree-shaking optimizations in production.
-
-```bash
-npm install -D @pyra/plugin-react
-```
-```ts
-import { defineConfig } from "pyra";
-import react from "@pyra/plugin-react";
-
-export default defineConfig({
-  plugins: [react()],
-});
-```
-It features Fast Refresh for instant state-preserving updates, Automatic JSX runtime detection, Support for `.jsx` and `.tsx` files and optimized builds with ESBuild transforms
-
-### 🔹 @pyra/plugin-vue
-
-Provides seamless Vue 3 single-file component support with hot module reloading, template compilation, and style scoping.
-
-```bash
-npm install -D @pyra/plugin-vue
-```
-
-```ts
-import { defineConfig } from "pyra";
-import vue from "@pyra/plugin-vue";
-
-export default defineConfig({
-  plugins: [vue()],
-});
-```
-It features `.vue` single-file component parsing, template compiler integration, scoped CSS and PostCSS support, and HMR for Vue components during development
-
-### 🔹 @pyra/plugin-svelte
-
-Integrates Svelte and SvelteKit workflows directly into Pyra’s dev server and bundler, providing optimized compilation and hot reloading.
-
-```bash
-npm install -D @pyra/plugin-svelte
-```
-
-```ts
-import { defineConfig } from "pyra";
-import svelte from "@pyra/plugin-svelte";
-
-export default defineConfig({
-  plugins: [svelte()],
-});
-```
-It features Built-in Svelte compiler, Reactive HMR updates, TypeScript + Svelte integration, SSR compatibility for advanced setups
-
-## Lifecycle hooks
-
-Below is an overview of the main hooks available in **Pyra’s Plugin API**.  
-Each hook represents a specific stage in Pyra’s internal lifecycle, from loading and transforming files to dev-server events and build finalization.
-
-| Hook | Stage | Description |
-|------|--------|-------------|
-| `config` | Before load | Mutate or extend the final user configuration before it’s resolved. Useful for injecting defaults or reading environment data. |
-| `resolveId` | Resolution | Intercept and modify import resolution for custom paths, aliases, or virtual modules. |
-| `load` | Load | Provide content for a module that doesn’t exist on disk — often used for virtual files or dynamically generated code. |
-| `transform` | Transform | Modify or compile source code before bundling — perfect for preprocessors, compilers, or macros. |
-| `buildStart` | Build start | Called once before the build begins. Use this for setup, dependency checks, or initial logging. |
-| `buildEnd` | Build end | Called once after build completion. Useful for cleanup, summary reports, or analytics. |
-| `closeBundle` | Finalization | Invoked after the bundle is completely written to disk — great for post-processing or deployment hooks. |
-| `configureServer` | Dev server | Add custom middleware or modify the local development server. Ideal for mock APIs or proxy routes. |
-| `handleHotUpdate` | HMR | React to file changes in development for custom hot reload behavior or live data refreshes. |
-
-Each hook receives a **context object** with helpful utilities such as logging, path resolution, access to the active configuration, and information about the current mode (`dev`, `build`, or `preview`). Hooks can be synchronous or asynchronous, depending on what the plugin needs to do.
-
-
-## 🧰 Sharing Plugins
-
-If you’ve built a plugin that could benefit others, you can publish it as an npm package. Pyra looks for plugins following the `pyra-plugin-*` naming convention.
-
-Example: 
+If your plugin is useful outside your project, publish it as an npm package. The naming convention is `pyra-plugin-*`:
 
 ```bash
 npm publish pyra-plugin-banner
 ```
-Users can then install and register it:
+
+Users install and register it the same way as any other plugin:
 
 ```bash
 npm install pyra-plugin-banner
 ```
 
 ```ts
-import banner from "pyra-plugin-banner";
+import banner from 'pyra-plugin-banner';
 
 export default defineConfig({
-  plugins: [banner({ text: "Built with Pyra" })],
+  plugins: [banner({ text: 'Built with Pyra' })],
 });
 ```
-Naming consistency helps others discover your plugin and ensures Pyra’s ecosystem remains clean and intuitive.
+
+---
+
+## Tips
+
+- **One concern per plugin.** A transform plugin should only transform. An instrumentation plugin should only instrument. Combining unrelated hooks in one plugin makes it harder to debug and impossible to disable selectively.
+- **Filter in `transform`.** Check the file extension or path before processing. Returning `null` is free; running a transform on every module is not.
+- **Prefer `config` over `setup` for config changes.** The `config` hook is purpose-built for mutating the config and runs earlier. Use `setup` when you need access to the build API (`addEsbuildPlugin`, etc.).
+- **Use `buildEnd` for manifest work.** If your plugin needs to add entries to the manifest (image variants, generated routes, asset maps), do it in `buildEnd` — the manifest is assembled but not yet written, so your changes will be included.
+- **Async hooks are fine.** All hooks can return a `Promise`. Pyra awaits them before continuing to the next stage.
+- **Throw to abort.** Throwing an error in any hook stops the current command with a non-zero exit code and prints the error. This is the correct way to fail a build when a precondition isn't met.
