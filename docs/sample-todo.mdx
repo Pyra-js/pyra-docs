@@ -39,13 +39,14 @@ npm create pyra my-todo-app
 ```
 
 When asked:
+
 - **Framework** → React
 - **Rendering mode** → Full-stack
 - **Variant** → TypeScript
 - **Add Tailwind CSS?** → No
 - **Package manager?** → npm
-- **install deps?** → Yes 
-- **create project?** → Yes 
+- **install deps?** → Yes
+- **create project?** → Yes
 
 Then start the dev server:
 
@@ -146,7 +147,7 @@ export function createTodo(title: string): Todo {
 export function updateTodo(
   id: string,
   title: string,
-  completed: boolean
+  completed: boolean,
 ): Todo | null {
   for (let i = 0; i < todos.length; i++) {
     if (todos[i].id === id) {
@@ -202,7 +203,10 @@ export async function POST(ctx: RequestContext) {
   const body = await ctx.request.json();
 
   if (!body.title || typeof body.title !== "string") {
-    return ctx.json({ error: "title is required" }, { status: 400 });
+    return ctx.json({
+      error: "title is required",
+      status: 400,
+    });
   }
 
   const todo = createTodo(body.title.trim());
@@ -274,7 +278,7 @@ curl -X PUT http://localhost:3000/api/todos/1 \
 curl -X DELETE http://localhost:3000/api/todos/2
 ```
 
-You should see JSON responses. The API is working — now let's build the page that uses it.
+You should see JSON responses. The API is working, now let's build the page that uses it.
 
 ---
 
@@ -289,7 +293,11 @@ Replace `src/routes/layout.tsx` with this:
 
 import React from "react";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <div
       style={{
@@ -533,24 +541,24 @@ npm run start
 
 Here's a quick reference for what each piece does:
 
-| File | URL | What it does |
-|------|-----|--------------|
-| `src/routes/layout.tsx` | wraps all pages | Shared header and container |
-| `src/routes/page.tsx` | `/` | Loads todos on the server, renders them, handles client interactions |
-| `src/routes/api/todos/route.ts` | `/api/todos` | `GET` returns all todos, `POST` creates one |
-| `src/routes/api/todos/[id]/route.ts` | `/api/todos/:id` | `PUT` updates a todo, `DELETE` removes it |
+| File                                 | URL              | What it does                                                         |
+| ------------------------------------ | ---------------- | -------------------------------------------------------------------- |
+| `src/routes/layout.tsx`              | wraps all pages  | Shared header and container                                          |
+| `src/routes/page.tsx`                | `/`              | Loads todos on the server, renders them, handles client interactions |
+| `src/routes/api/todos/route.ts`      | `/api/todos`     | `GET` returns all todos, `POST` creates one                          |
+| `src/routes/api/todos/[id]/route.ts` | `/api/todos/:id` | `PUT` updates a todo, `DELETE` removes it                            |
 
 And the key concepts you used:
 
-| Concept | What it means |
-|---------|---------------|
-| File-based routing | Your file's path in `src/routes/` becomes its URL |
-| `[id]` folder | A dynamic segment — matches any value, readable via `ctx.params.id` |
-| `export function GET` | Handles `GET` requests to that route's URL |
+| Concept                        | What it means                                                          |
+| ------------------------------ | ---------------------------------------------------------------------- |
+| File-based routing             | Your file's path in `src/routes/` becomes its URL                      |
+| `[id]` folder                  | A dynamic segment — matches any value, readable via `ctx.params.id`    |
+| `export function GET`          | Handles `GET` requests to that route's URL                             |
 | `export async function load()` | Runs on the server before the page renders; return value becomes props |
-| `ctx.json()` | Sends a JSON response |
-| `ctx.request.json()` | Reads JSON from the request body |
-| Hydration | The process of React attaching interactivity to server-rendered HTML |
+| `ctx.json()`                   | Sends a JSON response                                                  |
+| `ctx.request.json()`           | Reads JSON from the request body                                       |
+| Hydration                      | The process of React attaching interactivity to server-rendered HTML   |
 
 ---
 

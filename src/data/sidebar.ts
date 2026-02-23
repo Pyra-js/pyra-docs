@@ -19,6 +19,7 @@ import {
   ListTodo,
   ImageIcon,
   Box,
+  Cookie,
 } from "lucide-react";
 
 export const SIDEBAR_ITEMS = [
@@ -98,6 +99,11 @@ export const SIDEBAR_ITEMS = [
         path: "/docs/request-context",
         label: "Request Context",
         icon: Box,
+      },
+      {
+        path: "/docs/cookies",
+        label: "Cookies",
+        icon: Cookie,
       },
     ],
   },

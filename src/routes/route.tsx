@@ -20,6 +20,7 @@ import Adapters from "../../docs/adapters.mdx";
 import SampleTodo from "../../docs/sample-todo.mdx";
 import ImageOptimization from "../../docs/Image-Optimization.mdx";
 import RequestContext from "../../docs/request-context.mdx";
+import Cookies from "../../docs/cookies.mdx";
 import { Route, Routes } from "react-router";
 import Home from "@/components/home";
 
@@ -185,6 +186,14 @@ function DocRoutes() {
         element={
           <DocsLayout>
             <RequestContext />
+          </DocsLayout>
+        }
+      />
+      <Route
+        path="/docs/cookies"
+        element={
+          <DocsLayout>
+            <Cookies />
           </DocsLayout>
         }
       />
