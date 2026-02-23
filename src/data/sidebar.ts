@@ -18,6 +18,7 @@ import {
   Cable,
   ListTodo,
   ImageIcon,
+  Box,
 } from "lucide-react";
 
 export const SIDEBAR_ITEMS = [
@@ -92,6 +93,11 @@ export const SIDEBAR_ITEMS = [
         path: "/docs/image-optimization",
         label: "Image Optimization",
         icon: ImageIcon,
+      },
+      {
+        path: "/docs/request-context",
+        label: "Request Context",
+        icon: Box,
       },
     ],
   },

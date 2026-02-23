@@ -43,6 +43,9 @@ When asked:
 - **Rendering mode** → Full-stack
 - **Variant** → TypeScript
 - **Add Tailwind CSS?** → No
+- **Package manager?** → npm
+- **install deps?** → Yes 
+- **create project?** → Yes 
 
 Then start the dev server:
 
@@ -79,7 +82,7 @@ src/routes/
         route.ts        →  handles /api/todos/1, /api/todos/2, etc.
 ```
 
-The `[id]` folder name (with square brackets) means "this segment can be anything" — a dynamic route. You'll see how to read that value in Step 5.
+The `[id]` folder name (with square brackets) means "this segment can be anything", a dynamic route. You'll see how to read that value in Step 5.
 
 ---
 
@@ -103,7 +106,7 @@ A TypeScript `interface` is a description of the shape of an object. This says e
 
 ## Step 4: Create a data store
 
-Real apps use a database. For this tutorial, we'll use a plain array in memory — it's simpler and works the same way from your app's point of view. The only catch is that the data resets when you restart the server.
+Real apps use a database. For this tutorial, we'll use a plain array in memory, it's simpler and works the same way from your app's point of view. The only catch is that the data resets when you restart the server.
 
 Create this file:
 
@@ -120,36 +123,56 @@ const todos: Todo[] = [
   { id: "3", title: "Add client interactivity", completed: false },
 ];
 
+// Get all todos
 export function getAllTodos(): Todo[] {
   return todos;
 }
 
+// Create a new todo
 export function createTodo(title: string): Todo {
-  const todo: Todo = { id: String(nextId++), title, completed: false };
-  todos.push(todo);
-  return todo;
+  const newTodo: Todo = {
+    id: String(nextId),
+    title: title,
+    completed: false,
+  };
+
+  nextId = nextId + 1;
+  todos.push(newTodo);
+
+  return newTodo;
 }
 
+// Update a todo
 export function updateTodo(
   id: string,
-  updates: Partial<Pick<Todo, "title" | "completed">>
-): Todo | undefined {
-  const todo = todos.find((t) => t.id === id);
-  if (!todo) return undefined;
-  if (updates.title !== undefined) todo.title = updates.title;
-  if (updates.completed !== undefined) todo.completed = updates.completed;
-  return todo;
+  title: string,
+  completed: boolean
+): Todo | null {
+  for (let i = 0; i < todos.length; i++) {
+    if (todos[i].id === id) {
+      todos[i].title = title;
+      todos[i].completed = completed;
+      return todos[i];
+    }
+  }
+
+  return null;
 }
 
+// Delete a todo
 export function deleteTodo(id: string): boolean {
-  const index = todos.findIndex((t) => t.id === id);
-  if (index === -1) return false;
-  todos.splice(index, 1);
-  return true;
+  for (let i = 0; i < todos.length; i++) {
+    if (todos[i].id === id) {
+      todos.splice(i, 1);
+      return true;
+    }
+  }
+
+  return false;
 }
 ```
 
-These are just plain functions that read and modify the array. Nothing special about them — they could just as easily call a database library.
+These are just plain functions that read and modify the array. Nothing special about them, they could just as easily call a database library.
 
 ---
 
@@ -157,7 +180,7 @@ These are just plain functions that read and modify the array. Nothing special a
 
 An **API route** is a URL that returns data (usually JSON) instead of an HTML page. Your frontend will call these URLs from the browser to create, update, and delete todos.
 
-In Pyra, you create an API route by adding a `route.ts` file. You export a function named after the HTTP method you want to handle — `GET`, `POST`, `PUT`, `DELETE`.
+In Pyra, you create an API route by adding a `route.ts` file. You export a function named after the HTTP method you want to handle, `GET`, `POST`, `PUT`, `DELETE`.
 
 > **What is an HTTP method?** When a browser or app makes a request, it says what kind of action it wants: `GET` means "give me data", `POST` means "create something", `PUT` means "update something", `DELETE` means "remove something".
 
@@ -187,7 +210,7 @@ export async function POST(ctx: RequestContext) {
 }
 ```
 
-`ctx` is the **request context** — it gives you everything about the incoming request and helpers to build a response:
+`ctx` is the **request context**, it gives you everything about the incoming request and helpers to build a response:
 
 - `ctx.request.json()` reads the request body as JSON
 - `ctx.json(data)` creates a JSON response (like `{ "id": "4", "title": "..." }`)
