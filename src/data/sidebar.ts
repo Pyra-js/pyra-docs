@@ -21,6 +21,7 @@ import {
   Box,
   Cookie,
   LayoutDashboard,
+  Globe,
 } from "lucide-react";
 
 export const SIDEBAR_ITEMS = [
@@ -110,6 +111,11 @@ export const SIDEBAR_ITEMS = [
         path: "/docs/dashboard",
         label: "Dashboard",
         icon: LayoutDashboard,
+      },
+      {
+        path: "/docs/cors",
+        label: "CORS",
+        icon: Globe,
       },
     ],
   },

@@ -22,6 +22,7 @@ import ImageOptimization from "../../docs/Image-Optimization.mdx";
 import RequestContext from "../../docs/request-context.mdx";
 import Cookies from "../../docs/cookies.mdx";
 import Dashboard from "../../docs/dashboard.mdx";
+import Cors from "../../docs/cors.mdx";
 import { Route, Routes } from "react-router";
 import Home from "@/components/home";
 
@@ -203,6 +204,14 @@ function DocRoutes() {
         element={
           <DocsLayout>
             <Dashboard />
+          </DocsLayout>
+        }
+      />
+      <Route
+        path="/docs/cors"
+        element={
+          <DocsLayout>
+            <Cors />
           </DocsLayout>
         }
       />
