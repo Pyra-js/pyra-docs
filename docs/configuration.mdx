@@ -7,15 +7,12 @@ Pyra’s configuration is designed to be familiar, minimally intrusive, and powe
 
 Pyra looks for a configuration file in your project root with one of several supported names: `pyra.config.ts`, `pyra.config.mts`, `pyra.config.js`, or `pyra.config.cjs`. TypeScript is recommended because it provides editor hints and static safety out of the box. If multiple files are present, Pyra chooses the first match in that order.
 
-The most common setup is a `pyra.config.ts` file, which you can create manually or generate using:
+The most common setup is a `pyra.config.ts` file, which you can create manually or generate using `npm create-pyra@latest`:
 
-```bash
-pyra init
-```
 Inside `pyra.config.ts`, you can define build options, plugins, aliases, and more:
 
 ```typescript
-import { defineConfig } from "pyra";
+import { defineConfig } from "@pyra-js/cli";
 
 export default defineConfig({
   entry: "./src/main.ts",

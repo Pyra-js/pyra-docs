@@ -1,16 +1,59 @@
-
 # TypeScript
 
-TypeScript is a first-class citizen in Pyra. You can start with **zero config**, then add stricter typing, path aliases, and multi-package setups as your project grows. This page covers how Pyra discovers TypeScript settings, how to wire up JSX and path aliases, how to type your environment variables, and how to ship libraries with `.d.ts` files.
+TypeScript is a first-class citizen in Pyra. You can start with zero config, just write `.ts` and `.tsx` files, then layer in stricter settings, path aliases, and environment variable types as your project grows.
 
-If your project has a `tsconfig.json`, Pyra reads relevant options (like JSX and path aliases) automatically. Use `.ts`/`.tsx` files anywhere in `src/` and run:
+---
 
-```bash
-pyra dev
-pyra build
+## How Pyra handles TypeScript
+
+Pyra uses **esbuild** internally for bundling and transpilation, not `tsc`. esbuild strips TypeScript types at build time without type-checking them, which is what makes `pyra dev` and `pyra build` fast. Type checking is a separate, explicit step.
+
+This means:
+
+- `.ts` and `.tsx` files work out of the box - no config required
+- Your `tsconfig.json` does **not** affect what gets bundled (esbuild has its own transform settings)
+- `tsconfig.json` governs your editor's IntelliSense and `tsc --noEmit` only
+- Type errors never block the dev server or the build
+
+---
+
+## Recommended `tsconfig.json`
+
+The Pyra project templates ship with this configuration, which works for both full-stack and SPA projects:
+
+```json
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "noEmit": true
+  },
+  "include": ["src/**/*"]
+}
 ```
 
-Type-checking is intentionally decoupled from bundling for speed. Keep a separate script for it:
+Key options:
+
+| Option | Why |
+|--------|-----|
+| `"moduleResolution": "Bundler"` | Matches how esbuild resolves modules - allows bare specifiers and `.js` extensions in imports without confusing `tsc` |
+| `"jsx": "react-jsx"` | Enables the React 17+ automatic JSX runtime (`react/jsx-runtime`) so you don't need to import React in every file |
+| `"noEmit": true` | `tsc` is used only for type checking - esbuild handles the actual output |
+| `"skipLibCheck": true` | Skips type checking inside `node_modules` - required when dependencies ship inconsistent `.d.ts` files |
+| `"strict": true` | Enables all strict checks (`noImplicitAny`, `strictNullChecks`, etc.) |
+
+---
+
+## Decoupled type checking
+
+Type checking is intentionally separate from bundling. Add a `typecheck` script to your `package.json`:
 
 ```json
 {
@@ -21,4 +64,203 @@ Type-checking is intentionally decoupled from bundling for speed. Keep a separat
   }
 }
 ```
-This gives you instant HMR while preserving correctness in CI.
+
+Run it on demand or in CI:
+
+```bash
+pnpm typecheck
+```
+
+This gives you instant HMR during development while still catching type errors before they reach production. In CI, run `typecheck` and `build` as separate steps so a type error doesn't silently slip past a successful build.
+
+---
+
+## JSX
+
+Pyra's esbuild pipeline handles JSX transformation automatically for `.tsx` and `.jsx` files - no plugin or config needed. The React adapter configures esbuild to use `react-jsx` (the automatic runtime) by default.
+
+Your `tsconfig.json` still needs `"jsx": "react-jsx"` so that your editor and `tsc --noEmit` understand JSX syntax:
+
+```json
+{
+  "compilerOptions": {
+    "jsx": "react-jsx"
+  }
+}
+```
+
+For Preact projects, use `"jsx": "react-jsx"` with `"jsxImportSource": "preact"`:
+
+```json
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact"
+  }
+}
+```
+
+---
+
+## Path aliases
+
+Path aliases require two places to be in sync: `tsconfig.json` (for the editor and `tsc`) and `resolve.alias` in `pyra.config.ts` (for the bundler). Setting only one will work in the editor or the bundle - not both.
+
+**`tsconfig.json`:**
+
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@components/*": ["src/components/*"],
+      "@lib/*": ["src/lib/*"]
+    }
+  }
+}
+```
+
+**`pyra.config.ts`:**
+
+```ts
+import { defineConfig } from '@pyra-js/cli';
+import { createReactAdapter } from '@pyra-js/adapter-react';
+
+export default defineConfig({
+  adapter: createReactAdapter(),
+  resolve: {
+    alias: {
+      '@': './src',
+      '@components': './src/components',
+      '@lib': './src/lib',
+    },
+  },
+});
+```
+
+Now you can use the alias anywhere:
+
+```ts
+// src/routes/page.tsx
+import { Button } from '@components/Button';
+import { formatDate } from '@lib/dates';
+```
+
+---
+
+## Typing environment variables
+
+`ctx.env` is typed as `Record<string, string>` - all values are strings because they come from `.env` files. You can add a declaration file to get autocomplete for your specific variables:
+
+```ts
+// src/env.d.ts
+declare namespace PyraEnv {
+  interface Env {
+    API_URL: string;
+    FEATURE_NEW_UI: string;
+    LOG_LEVEL: 'debug' | 'info' | 'error';
+  }
+}
+```
+
+Or use a typed helper at the call site:
+
+```ts
+// src/routes/dashboard/page.tsx
+import type { RequestContext } from '@pyra-js/cli';
+
+export async function load(ctx: RequestContext) {
+  const apiUrl = ctx.env.API_URL;   // string - prefix stripped by Pyra
+  const logLevel = ctx.env.LOG_LEVEL;
+
+  const data = await fetch(`${apiUrl}/items`).then(r => r.json());
+  return { data };
+}
+```
+
+Note that the `PYRA_` prefix (or whatever you configure via `env.prefix`) is stripped before the variable reaches `ctx.env`. `PYRA_API_URL` in your `.env` file becomes `ctx.env.API_URL` in your code.
+
+---
+
+## Strict mode
+
+All Pyra templates ship with `"strict": true`. This enables the full suite of strict checks and is the recommended setting. The most impactful ones for Pyra projects are:
+
+- **`strictNullChecks`** - catches `undefined` from `ctx.params`, unmatched routes, and optional load data
+- **`noImplicitAny`** - forces you to type `load()` return values and API handler parameters
+- **`strictFunctionTypes`** - catches mismatched middleware and handler signatures
+
+If you're adding Pyra to an existing project with strict mode off, enable the checks incrementally rather than all at once:
+
+```json
+{
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "noImplicitAny": true
+  }
+}
+```
+
+---
+
+## Typing route modules
+
+Pyra exports types for every file convention. Import them from `@pyra-js/cli`:
+
+```ts
+import type { RequestContext, Middleware, ErrorPageProps } from '@pyra-js/cli';
+```
+
+| Type | Used in |
+|------|---------|
+| `RequestContext` | `load()` functions, API handlers, middleware |
+| `Middleware` | `middleware.ts` default export |
+| `ErrorPageProps` | `error.tsx` props |
+| `CacheConfig` | `export const cache` in page routes |
+| `PrerenderConfig` | `export const prerender` in page routes |
+
+Example with explicit types:
+
+```ts
+// src/routes/middleware.ts
+import type { Middleware } from '@pyra-js/cli';
+
+const auth: Middleware = async (ctx, next) => {
+  if (!ctx.headers.get('Authorization')) {
+    return ctx.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  return next();
+};
+
+export default auth;
+```
+
+```ts
+// src/routes/blog/[slug]/page.tsx
+import type { RequestContext, CacheConfig, PrerenderConfig } from '@pyra-js/cli';
+
+export const prerender: PrerenderConfig = {
+  paths: () => ['hello-world', 'getting-started'],
+};
+
+export const cache: CacheConfig = {
+  maxAge: 3600,
+  staleWhileRevalidate: 86400,
+};
+
+export async function load(ctx: RequestContext) {
+  const { slug } = ctx.params;
+  const post = await fetchPost(slug);
+  return { post };
+}
+```
+
+---
+
+## Tips
+
+- **Don't use `tsc` to emit files.** Set `"noEmit": true` in `tsconfig.json` and let esbuild handle output. Running both creates conflicting `.js` files in your project.
+- **`moduleResolution: "Bundler"` is required for modern packages.** Many packages ship `exports` fields in `package.json`. The older `"Node"` resolution doesn't support them — `"Bundler"` does.
+- **Path aliases must be registered in both places.** `tsconfig.json` `paths` is for the editor and `tsc`. `resolve.alias` in `pyra.config.ts` is for esbuild. Omitting either causes imports to fail in one context.
+- **Type checking runs on every push in CI.** The `ci.yml` workflow runs `pnpm typecheck` before `pnpm build`. Fix type errors before they block CI.
