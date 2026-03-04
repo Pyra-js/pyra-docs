@@ -133,6 +133,11 @@ export const SIDEBAR_ITEMS = [
         label: "Layout",
         icon: LayoutDashboard,
       },
+      {
+        path: "/docs/routing",
+        label: "Routing",
+        icon: Route,
+      },
     ],
   },
   {
