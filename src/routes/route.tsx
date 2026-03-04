@@ -216,6 +216,14 @@ function DocRoutes() {
           </DocsLayout>
         }
       />
+      <Route
+        path="/docs/api-routes"
+        element={
+          <DocsLayout>
+            <ApiRoutes />
+          </DocsLayout>
+        }
+      />
     </Routes>
   );
 };
