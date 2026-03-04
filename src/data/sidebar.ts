@@ -128,6 +128,11 @@ export const SIDEBAR_ITEMS = [
         label: "Page",
         icon: FileText,
       },
+      {
+        path: "/docs/layout",
+        label: "Layout",
+        icon: LayoutDashboard,
+      },
     ],
   },
   {
