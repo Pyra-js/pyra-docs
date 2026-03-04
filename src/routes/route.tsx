@@ -26,6 +26,7 @@ import Cors from "../../docs/cors.mdx";
 import ApiRoutes from "../../docs/api-routes.mdx";
 import Page from "../../docs/Page.mdx";
 import Layout from "../../docs/Layout.mdx";
+import Routing from "../../docs/routing.mdx";
 import { Route, Routes } from "react-router";
 import Home from "@/components/home";
 
@@ -239,6 +240,14 @@ function DocRoutes() {
         element={
           <DocsLayout>
             <Layout />
+          </DocsLayout>
+        }
+      />
+      <Route
+        path="/docs/routing"
+        element={
+          <DocsLayout>
+            <Routing />
           </DocsLayout>
         }
       />
