@@ -141,6 +141,16 @@ export const SIDEBAR_ITEMS = [
     ],
   },
   {
+    category: "Adapters",
+    items: [
+      {
+        path: "/docs/adapter-react",
+        label: "React",
+        icon: Box,
+      },
+    ],
+  },
+  {
     category: "Guides",
     items: [
       {
