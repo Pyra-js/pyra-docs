@@ -1,6 +1,6 @@
 # Routing
 
-How Pyra maps URLs to files — no configuration required.
+How Pyra maps URLs to files, no configuration required.
 
 ---
 
@@ -32,8 +32,8 @@ Pyra recognises five special file names inside `src/routes/`:
 
 | File | Purpose |
 |------|---------|
-| `page.tsx` | A page — renders HTML at this URL |
-| `route.ts` | An API route — handles HTTP requests at this URL |
+| `page.tsx` | A page - renders HTML at this URL |
+| `route.ts` | An API route - handles HTTP requests at this URL |
 | `layout.tsx` | Wraps all pages in this directory and below |
 | `middleware.ts` | Runs before all routes in this directory and below |
 | `error.tsx` | Error boundary for this directory and below |
@@ -61,7 +61,7 @@ src/routes/
 
 ## Dynamic Routes
 
-Use square brackets around a directory name to create a dynamic segment — a part of the URL that can be any value:
+Use square brackets around a directory name to create a dynamic segment - a part of the URL that can be any value:
 
 ```
 src/routes/
@@ -105,7 +105,7 @@ src/routes/
         └── page.tsx
 ```
 
-This matches `/docs`, `/docs/getting-started`, `/docs/api/reference/types` — any depth. `context.params.path` is the full remaining path as a string (e.g., `"api/reference/types"`).
+This matches `/docs`, `/docs/getting-started`, `/docs/api/reference/types` - any depth. `context.params.path` is the full remaining path as a string (e.g., `"api/reference/types"`).
 
 ---
 
@@ -113,9 +113,9 @@ This matches `/docs`, `/docs/getting-started`, `/docs/api/reference/types` — a
 
 When multiple routes could match a URL, Pyra uses this priority order:
 
-1. **Static** — exact directory name match (e.g., `about/`)
-2. **Dynamic** — bracketed segment (e.g., `[slug]/`)
-3. **Catch-all** — spread segment (e.g., `[...path]/`)
+1. **Static** - exact directory name match (e.g., `about/`)
+2. **Dynamic** - bracketed segment (e.g., `[slug]/`)
+3. **Catch-all** - spread segment (e.g., `[...path]/`)
 
 So if you have both `src/routes/blog/featured/page.tsx` and `src/routes/blog/[slug]/page.tsx`, a request to `/blog/featured` will always match the static route.
 
@@ -209,7 +209,7 @@ export default defineConfig({
 
 ## Tips
 
-- **No index files.** Pyra uses `page.tsx`, not `index.tsx`. The distinction is intentional — `index` is ambiguous, `page` is explicit.
-- **Colocate related files.** You can put component files, hooks, and utilities right alongside your routes. Pyra only picks up `page.tsx`, `route.ts`, `layout.tsx`, `middleware.ts`, and `error.tsx` — everything else is ignored.
+- **No index files.** Pyra uses `page.tsx`, not `index.tsx`. The distinction is intentional - `index` is ambiguous, `page` is explicit.
+- **Colocate related files.** You can put component files, hooks, and utilities right alongside your routes. Pyra only picks up `page.tsx`, `route.ts`, `layout.tsx`, `middleware.ts`, and `error.tsx` - everything else is ignored.
 - **Don't install a separate router.** If you're using Pyra for routing, you don't need `react-router-dom` or any other client-side router. They'd conflict. Pyra's `<Link>` component and file-based routing cover everything.
 - **Dynamic params are always strings.** Parse with `parseInt()` or `parseFloat()` when you need numbers.
