@@ -6,7 +6,7 @@ Build backend endpoints right alongside your pages.
 
 ## What are API Routes?
 
-API routes let you create backend endpoints — REST APIs, webhooks, health checks, form handlers — inside the same project as your pages. No separate backend server needed.
+API routes let you create backend endpoints, REST APIs, webhooks, health checks, form handlers, inside the same project as your pages. No separate backend server needed.
 
 If you've ever built a frontend that talks to a separate API server, you know the hassle: two repos, two deploys, CORS headers, environment syncing. With Pyra, your API lives in the same directory tree as your pages. Create a `route.ts` file, export some handler functions, and you have a working endpoint.
 
@@ -334,5 +334,5 @@ A request to `/api/users` runs the root middleware first, then the API middlewar
 - **Use the `api/` directory convention.** It's not enforced by Pyra, but keeping API routes under `api/` makes it obvious which paths are endpoints vs. pages.
 - **Handlers can be async or sync.** If you need to await a database call, make the function `async`. If it's a simple response, sync is fine.
 - **Always return a Response.** Every handler must return a `Response` object. Use the context helpers (`json()`, `text()`, etc.) for convenience.
-- **Read the body only once.** The request body is a stream — you can only call `request.json()` or `request.text()` once per request. If you need the body in multiple places, read it once and pass it around.
+- **Read the body only once.** The request body is a stream - you can only call `request.json()` or `request.text()` once per request. If you need the body in multiple places, read it once and pass it around.
 - **Use route parameters for resource IDs.** `/api/users/[id]` is cleaner than `/api/users?id=123` for identifying specific resources.

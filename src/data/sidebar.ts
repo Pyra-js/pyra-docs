@@ -123,6 +123,11 @@ export const SIDEBAR_ITEMS = [
         label: "API Routes",
         icon: Network,
       },
+      {
+        path: "/docs/page",
+        label: "Page",
+        icon: FileText,
+      },
     ],
   },
   {

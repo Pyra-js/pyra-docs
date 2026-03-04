@@ -24,6 +24,7 @@ import Cookies from "../../docs/cookies.mdx";
 import Dashboard from "../../docs/dashboard.mdx";
 import Cors from "../../docs/cors.mdx";
 import ApiRoutes from "../../docs/api-routes.mdx";
+import Page from "../../docs/Page.mdx";
 import { Route, Routes } from "react-router";
 import Home from "@/components/home";
 
@@ -221,6 +222,14 @@ function DocRoutes() {
         element={
           <DocsLayout>
             <ApiRoutes />
+          </DocsLayout>
+        }
+      />
+      <Route
+        path="/docs/page"
+        element={
+          <DocsLayout>
+            <Page />
           </DocsLayout>
         }
       />
