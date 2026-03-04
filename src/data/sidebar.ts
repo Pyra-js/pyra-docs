@@ -23,6 +23,7 @@ import {
   LayoutDashboard,
   Globe,
   Network,
+  Atom,
 } from "lucide-react";
 
 export const SIDEBAR_ITEMS = [
@@ -146,7 +147,7 @@ export const SIDEBAR_ITEMS = [
       {
         path: "/docs/adapter-react",
         label: "React",
-        icon: Box,
+        icon: Atom,
       },
     ],
   },
