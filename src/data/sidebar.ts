@@ -22,6 +22,7 @@ import {
   Cookie,
   LayoutDashboard,
   Globe,
+  Network,
 } from "lucide-react";
 
 export const SIDEBAR_ITEMS = [
@@ -116,6 +117,11 @@ export const SIDEBAR_ITEMS = [
         path: "/docs/cors",
         label: "CORS",
         icon: Globe,
+      },
+      {
+        path: "/docs/api-routes",
+        label: "API Routes",
+        icon: Network,
       },
     ],
   },

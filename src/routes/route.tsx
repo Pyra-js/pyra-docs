@@ -23,6 +23,7 @@ import RequestContext from "../../docs/request-context.mdx";
 import Cookies from "../../docs/cookies.mdx";
 import Dashboard from "../../docs/dashboard.mdx";
 import Cors from "../../docs/cors.mdx";
+import ApiRoutes from "../../docs/api-routes.mdx";
 import { Route, Routes } from "react-router";
 import Home from "@/components/home";
 
