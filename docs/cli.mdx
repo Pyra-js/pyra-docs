@@ -4,11 +4,16 @@ Pyra's command-line interface is the front door to the entire toolchain. It's ho
 
 ## Getting the CLI
 
-The CLI is provided by the `pyrajs-cli` package, which exposes the `pyra` binary. The fastest way to get started is by scaffolding a new project, this installs the CLI as a dev dependency automatically:
+The CLI is provided by the `@pyra-js/cli` package, which exposes the `pyra` binary. The fastest way to get started is by scaffolding a new project, this installs the CLI as a dev dependency automatically:
 
 ```bash
 # scaffold a new project (recommended)
 npm create pyra@latest
+```
+
+or 
+
+```bash
 pnpm create pyra@latest
 yarn create pyra
 bun create pyra
@@ -18,15 +23,15 @@ You can also install the CLI globally, or add it as a dev dependency to an exist
 
 ```bash
 # global install
-npm i -g pyrajs-cli
+npm i -g @pyra-js/cli
 pyra dev
 
 # project-local install
-npm i -D pyrajs-cli
+npm i -D @pyra-js/cli
 npx pyra dev
 ```
 
-In team settings, keeping `pyrajs-cli` as a dev dependency and using `package.json` scripts ensures everyone runs the same version:
+In team settings, keeping `@pyra-js/cli` as a dev dependency and using `package.json` scripts ensures everyone runs the same version:
 
 ```json
 {
