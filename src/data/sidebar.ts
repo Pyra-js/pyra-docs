@@ -152,6 +152,16 @@ export const SIDEBAR_ITEMS = [
     ],
   },
   {
+    category: "Plugins",
+    items: [
+      {
+        path: "/docs/framer-motion-plugin",
+        label: "Framer Motion Plugin",
+        icon: Puzzle,
+      },
+    ],
+  },
+  {
     category: "Guides",
     items: [
       {
