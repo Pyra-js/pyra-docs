@@ -28,6 +28,7 @@ import Page from "../../docs/Page.mdx";
 import Layout from "../../docs/Layout.mdx";
 import Routing from "../../docs/routing.mdx";
 import AdapterReact from "../../docs/adapter-react.mdx";
+import FramerMotionPlugin from "../../docs/Framer-motion-plugin.mdx";
 import { Route, Routes } from "react-router";
 import Home from "@/components/home";
 
@@ -257,6 +258,14 @@ function DocRoutes() {
         element={
           <DocsLayout>
             <AdapterReact />
+          </DocsLayout>
+        }
+      />
+      <Route
+        path="/docs/framer-motion-plugin"
+        element={
+          <DocsLayout>
+            <FramerMotionPlugin />
           </DocsLayout>
         }
       />

@@ -1,4 +1,4 @@
-# Framer Motion
+# Framer Motion Plugin
 
 Use Framer Motion with Pyra SSR without invisible content or broken entrance animations.
 
@@ -27,7 +27,7 @@ Framer Motion renders the `initial` state into the SSR HTML as an inline style:
 </div>
 ```
 
-For `animate`-based animations (where Framer Motion knows the target state at render time), the library renders the `animate` state on the server — so the HTML is correct. But for `whileInView` animations, there is no target state until the IntersectionObserver fires client-side. The server renders `initial`, and the content stays invisible until JavaScript hydrates, Framer Motion initializes, and the observer detects the element.
+For `animate`-based animations (where Framer Motion knows the target state at render time), the library renders the `animate` state on the server, so the HTML is correct. But for `whileInView` animations, there is no target state until the IntersectionObserver fires client-side. The server renders `initial`, and the content stays invisible until JavaScript hydrates, Framer Motion initializes, and the observer detects the element.
 
 In practice this means:
 
@@ -41,7 +41,7 @@ In practice this means:
 
 Pyra provides a plugin that solves this at the framework level. It injects a small `<style>` tag into every SSR page that overrides Framer Motion's inline opacity and transform styles, keeping all animated elements visible during SSR and before hydration.
 
-After React hydrates and Framer Motion initializes client-side, the override is removed — and Framer Motion's own animation system takes over normally.
+After React hydrates and Framer Motion initializes client-side, the override is removed, and Framer Motion's own animation system takes over normally.
 
 ---
 
@@ -89,7 +89,7 @@ That's all the configuration needed. Your existing Framer Motion components work
 <style id="__pyra_fm">[data-projection-id]{opacity:1!important;transform:none!important}</style>
 ```
 
-Framer Motion adds a `data-projection-id` attribute to every `motion.*` element it renders. This selector targets all of them and overrides their inline styles — making them fully visible regardless of what `initial` specifies.
+Framer Motion adds a `data-projection-id` attribute to every `motion.*` element it renders. This selector targets all of them and overrides their inline styles, making them fully visible regardless of what `initial` specifies.
 
 Because this style is in `<head>`, it applies before the browser paints anything. There is no flash of invisible content.
 
@@ -106,7 +106,7 @@ useEffect(() => {
 }, []);
 ```
 
-The `requestAnimationFrame` delay is intentional. Framer Motion uses `useLayoutEffect` internally to set up its animation engine — by deferring to the next frame, the override isn't removed until Framer Motion has fully initialized and is ready to control the elements. Removing it too early would cause a visible jump from visible back to `initial` before Framer Motion can animate.
+The `requestAnimationFrame` delay is intentional. Framer Motion uses `useLayoutEffect` internally to set up its animation engine, by deferring to the next frame, the override isn't removed until Framer Motion has fully initialized and is ready to control the elements. Removing it too early would cause a visible jump from visible back to `initial` before Framer Motion can animate.
 
 Once the style is removed, Framer Motion's `whileInView`, `animate`, and all other animation props work exactly as they do in a client-side-only app.
 
@@ -116,12 +116,12 @@ Once the style is removed, Framer Motion's `whileInView`, `animate`, and all oth
 
 With the plugin active, all Framer Motion features work normally:
 
-- `whileInView` — triggers when the element enters the viewport
-- `animate` — plays immediately after hydration
-- `whileHover` / `whileTap` — interactive animations, unaffected
-- `AnimatePresence` — enter/exit animations for conditional elements
-- `useAnimation` / `useMotionValue` — programmatic control
-- `layout` animations — automatic layout transitions
+- `whileInView` - triggers when the element enters the viewport
+- `animate` - plays immediately after hydration
+- `whileHover` / `whileTap` - interactive animations, unaffected
+- `AnimatePresence` - enter/exit animations for conditional elements
+- `useAnimation` / `useMotionValue` - programmatic control
+- `layout` animations - automatic layout transitions
 
 The only difference is that during SSR and the brief moment before `<FramerMotionReady>` fires, elements are visible instead of invisible. The animations themselves are unchanged.
 
@@ -131,7 +131,7 @@ The only difference is that during SSR and the brief moment before `<FramerMotio
 
 Even with the plugin, it's worth understanding which `initial` values are safe vs. which ones cause the SSR problem in the first place.
 
-**Safe — transforms only:**
+**Safe - transforms only:**
 
 ```tsx
 // Fine: y, x, scale don't hide content
@@ -140,7 +140,7 @@ Even with the plugin, it's worth understanding which `initial` values are safe v
 </motion.div>
 ```
 
-**Problematic without the plugin — opacity:**
+**Problematic without the plugin - opacity:**
 
 ```tsx
 // Without the plugin, this bakes opacity: 0 into SSR HTML
@@ -151,7 +151,7 @@ Even with the plugin, it's worth understanding which `initial` values are safe v
 
 The plugin fixes the opacity case automatically, but if you're building new components, preferring `y`/`scale`/`x` in `initial` over `opacity` keeps things simpler and avoids the dependency on the plugin's override entirely.
 
-**Always safe — interactive-only animations:**
+**Always safe - interactive-only animations:**
 
 ```tsx
 // whileHover and whileTap never affect SSR
@@ -208,4 +208,4 @@ CSS animations start before JavaScript loads, so there's never a blank frame. Us
 - **The plugin has no options.** It's a single `<style>` tag — nothing to configure.
 - **Works in both dev and production.** The `headInjection` hook runs in the dev server and the production server.
 - **No performance cost.** The injected `<style>` block is fewer than 100 bytes and is removed after hydration. It doesn't affect runtime animation performance.
-- **Don't use `initial={{ opacity: 0 }}` in `animate`-based animations.** For `animate` (not `whileInView`), Framer Motion renders the `animate` state on the server, so the plugin override is irrelevant — but it still makes the code harder to reason about.
+- **Don't use `initial={{ opacity: 0 }}` in `animate`-based animations.** For `animate` (not `whileInView`), Framer Motion renders the `animate` state on the server, so the plugin override is irrelevant, but it still makes the code harder to reason about.
